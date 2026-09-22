@@ -1,0 +1,14 @@
+{
+  "description": "Refunds and credits issued in the last 30 days, by reason code. Simulates the finance/support dashboard.",
+  "window": {"from": "2026-06-16", "to": "2026-07-15"},
+  "generated_at": "2026-07-16T02:10:00Z",
+  "by_reason": [
+    {"reason": "weight_difference_credit", "count": 194200, "median_amount_paise": 3400, "share_automatic": 1.0, "note": "Automatic credits at pick-complete; under the Rs.100 auto threshold in almost all cases."},
+    {"reason": "unwanted_substitute", "count": 9140, "median_amount_paise": 11800, "share_automatic": 0.0, "note": "Top human-handled category, consistent with the support playbook."},
+    {"reason": "missing_item", "count": 6870, "median_amount_paise": 9600, "share_automatic": 0.0},
+    {"reason": "late_delivery_credit", "count": 5230, "median_amount_paise": 5000, "share_automatic": 0.9},
+    {"reason": "order_cancelled_before_pick", "count": 4110, "median_amount_paise": 61200, "share_automatic": 1.0, "note": "UPI bank refunds; card orders appear as released holds, not refunds."}
+  ],
+  "above_500_rupees_requiring_fraud_approval": {"count": 1830, "median_approval_minutes": 140},
+  "sub_rule_broken_flags": {"count": 41, "note": "Cases where the substitution ladder or a hard line was not followed; reviewed weekly by product."}
+}

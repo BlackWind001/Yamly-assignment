@@ -1,0 +1,43 @@
+{
+  "description": "Payment attempt outcomes for the last 30 days, by method. Simulates the live payments dashboard. Rates are fractions (0.09 = 9%).",
+  "window": {"from": "2026-06-16", "to": "2026-07-15"},
+  "generated_at": "2026-07-16T02:10:00Z",
+  "by_method": [
+    {
+      "method": "upi",
+      "share_of_orders": 0.61,
+      "attempts": 412480,
+      "first_attempt_failure_rate": 0.045,
+      "failure_rate_after_retries": 0.008,
+      "note": "UPI failures are mostly bank-side timeouts; system retries (same attempt ID) recover most of them."
+    },
+    {
+      "method": "card",
+      "share_of_orders": 0.24,
+      "attempts": 162350,
+      "first_attempt_failure_rate": 0.091,
+      "failure_rate_after_retries": 0.031,
+      "note": "Typed-card failures are dominated by wrong number / expiry typos and 3-D Secure abandonment."
+    },
+    {
+      "method": "cod",
+      "share_of_orders": 0.15,
+      "attempts": 101210,
+      "first_attempt_failure_rate": 0.0,
+      "failure_rate_after_retries": 0.0,
+      "note": "No online payment; failures show up downstream as refused deliveries instead (see fraud rules)."
+    }
+  ],
+  "card_detail": {
+    "checkout_extra_seconds_vs_upi_median": 38,
+    "card_entry_abandonment_rate": 0.12,
+    "provider_benchmark_saved_token_first_attempt_failure_rate": 0.028,
+    "note": "PayOrbit benchmark: saved-token (tokenized) card charges fail on first attempt ~2.8% vs our 9.1% for typed cards — the core quantitative case for saved cards."
+  },
+  "weekly_card_failure_trend": [
+    {"week_starting": "2026-06-15", "first_attempt_failure_rate": 0.089},
+    {"week_starting": "2026-06-22", "first_attempt_failure_rate": 0.093},
+    {"week_starting": "2026-06-29", "first_attempt_failure_rate": 0.09},
+    {"week_starting": "2026-07-06", "first_attempt_failure_rate": 0.092}
+  ]
+}

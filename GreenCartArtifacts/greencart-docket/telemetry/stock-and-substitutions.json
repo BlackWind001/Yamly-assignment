@@ -1,0 +1,22 @@
+{
+  "description": "Out-of-stock (OOS) encounters at picking time, and substitution offer outcomes, by category. An OOS encounter = picker reached the shelf and the item was not there. Simulates the live stock dashboard.",
+  "window": {"from": "2026-06-16", "to": "2026-07-15"},
+  "generated_at": "2026-07-16T02:10:00Z",
+  "oos_rate_by_category": [
+    {"category": "vegetables_fruits", "oos_rate_morning": 0.06, "oos_rate_evening_peak": 0.19, "note": "Weighed items; evening drain fastest. Matches picker field notes."},
+    {"category": "dairy_bread", "oos_rate_morning": 0.05, "oos_rate_evening_peak": 0.14},
+    {"category": "staples_grains", "oos_rate_morning": 0.02, "oos_rate_evening_peak": 0.04},
+    {"category": "snacks_beverages", "oos_rate_morning": 0.03, "oos_rate_evening_peak": 0.07},
+    {"category": "baby_care", "oos_rate_morning": 0.02, "oos_rate_evening_peak": 0.03},
+    {"category": "non_veg", "oos_rate_morning": 0.07, "oos_rate_evening_peak": 0.16, "note": "Never substituted, per the hard line in the substitution spec; OOS here always means item unavailable."}
+  ],
+  "substitution_offer_outcomes": [
+    {"category": "staples_grains", "offers": 8120, "accepted_rate": 0.74, "accepted_rate_size_swap": 0.86, "accepted_rate_brand_swap": 0.58},
+    {"category": "vegetables_fruits", "offers": 26840, "accepted_rate": 0.55, "accepted_rate_size_swap": 0.71, "accepted_rate_brand_swap": 0.4},
+    {"category": "dairy_bread", "offers": 11930, "accepted_rate": 0.63, "accepted_rate_size_swap": 0.79, "accepted_rate_brand_swap": 0.47},
+    {"category": "snacks_beverages", "offers": 6410, "accepted_rate": 0.61, "accepted_rate_size_swap": 0.77, "accepted_rate_brand_swap": 0.49},
+    {"category": "baby_care", "offers": 310, "accepted_rate": 0.29, "accepted_rate_size_swap": 0.41, "accepted_rate_brand_swap": 0.12, "note": "Lowest acceptance by far; supports the spec's hard line — most baby items are simply never offered a substitute."}
+  ],
+  "no_response_rate_within_3_minutes": 0.22,
+  "note": "22% of substitution prompts get no customer answer inside the 3-minute window and fall back to the customer's saved default."
+}

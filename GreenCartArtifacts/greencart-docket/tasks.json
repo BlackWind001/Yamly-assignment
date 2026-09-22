@@ -1,0 +1,73 @@
+{
+  "description": "Three example 'tasks at hand'. Each task lists the fragments (by doc file + frag id) and telemetry that matter for it, with a weight and a one-line why. This file IS the 'fake smart part' for the front-end assignment: a candidate's app can read it directly instead of building any real relevance logic. Weights: critical = miss this and you will likely build something wrong or break something; helpful = makes the work better/faster; background = context, fine to dim or collapse.",
+  "weights": ["critical", "helpful", "background"],
+  "tasks": [
+    {
+      "id": "task-saved-cards",
+      "title": "Bring back saved cards at checkout",
+      "story": "Roadmap Bet 1. A developer (or coding agent) is about to design and build saved cards. The catch: the most detailed document about saved cards is abandoned and partly wrong, and the real constraints are scattered across payments, fraud, security, and an incident report.",
+      "fragments": [
+        {"doc": "docs/03-payments-design.md", "frag": "pay-token-rule", "weight": "critical", "why": "The only allowed storage approach today: provider tokens, never card numbers. Directly contradicts the abandoned PRD."},
+        {"doc": "docs/15-prd-saved-cards-2024.md", "frag": "old-assumption-self-storage", "weight": "critical", "why": "The trap itself: the most findable saved-cards doc proposes a storage design that is now forbidden. Surfacing it WITH its warning is the whole game."},
+        {"doc": "docs/03-payments-design.md", "frag": "pay-retry-attempt-id", "weight": "critical", "why": "Any new charge path must reuse attempt IDs on retry; saved-card charges are a new charge path."},
+        {"doc": "docs/20-fraud-rules.md", "frag": "fraud-saved-card-review", "weight": "critical", "why": "Saved card + new device + >Rs.2000 goes to review before capture; the checkout flow must design for a 'confirming payment' state."},
+        {"doc": "docs/03-payments-design.md", "frag": "pay-capture-timing", "weight": "critical", "why": "Hold at checkout, capture after weighing — saved cards change how the card is entered, not when money moves."},
+        {"doc": "docs/15-prd-saved-cards-2024.md", "frag": "old-ux-flow", "weight": "helpful", "why": "The customer research and checkout UX from the abandoned PRD are still valid and save redoing the research."},
+        {"doc": "docs/05-incident-2024-08-double-charge.md", "frag": "incident-retry-lesson", "weight": "helpful", "why": "The story behind the attempt-ID rule; makes the rule stick."},
+        {"doc": "docs/03-payments-design.md", "frag": "pay-hold-120", "weight": "helpful", "why": "Saved-card orders with weighed items still hold 120% and capture must never exceed the hold."},
+        {"doc": "docs/28-security-data-access.md", "frag": "support-last4-only", "weight": "helpful", "why": "Every surface showing a saved card is last-4 + network only; support tooling included."},
+        {"doc": "docs/16-runbook-payment-failure-spike.md", "frag": "runbook-no-manual-retry", "weight": "helpful", "why": "Cards have no backup provider and manual recharges are forbidden — shapes error handling for saved-card failures."},
+        {"doc": "docs/30-roadmap-2026.md", "frag": "roadmap-three-bets", "weight": "background", "why": "Why this task exists and its priority."},
+        {"doc": "docs/11-price-storage-note.md", "frag": "paise-integers", "weight": "background", "why": "Amounts on any new payment path are integer paise."}
+      ],
+      "telemetry": [
+        {"file": "telemetry/payment-failures.json", "look_at": "card_detail", "why": "The quantitative case: typed cards fail first attempt at 9.1% vs 2.8% provider benchmark for saved tokens; plus the 38s checkout gap and 12% card-entry abandonment.", "chart_idea": "Typed-card vs saved-token first-attempt failure rate, and the weekly typed-card trend."}
+      ]
+    },
+    {
+      "id": "task-4h-window-indore",
+      "title": "Evaluate a wider delivery window for Indore",
+      "story": "Leadership decided in Nov 2025 to keep the two-hour promise and fix Indore capacity instead. A developer (or agent) asked to 'look into a 4-hour option for Indore' must first discover that this exact debate already happened, what was decided and why, and which systems quietly assume 90 minutes.",
+      "fragments": [
+        {"doc": "docs/13-offsite-notes-2025-delivery-debate.md", "frag": "offsite-2h-brand-decision", "weight": "critical", "why": "The decision and its reasoning already exist. Any work here starts from this, not from zero — and the allowed shape is 'scheduled option beside the promise', never a replacement."},
+        {"doc": "docs/07-delivery-promise.md", "frag": "promise-math", "weight": "critical", "why": "The real time budget: 5 min store window + 90 min plan + ~25 min buffer. 'Four hours' touches all three numbers, not one."},
+        {"doc": "docs/25-rider-batching.md", "frag": "batch-90min-assumption", "weight": "critical", "why": "Batching logic hard-assumes the 90-minute plan; a window change means rework, not a config edit."},
+        {"doc": "docs/14-brd-indore-expansion.md", "frag": "brd-store-hours-9pm", "weight": "critical", "why": "Indore stores close at 9 pm — a wider evening window may promise hours that physically cannot exist."},
+        {"doc": "docs/07-delivery-promise.md", "frag": "promise-clock-customer", "weight": "helpful", "why": "Customer clock vs ops clock differ by up to 5 minutes; any lateness analysis must state which clock it uses."},
+        {"doc": "docs/21-store-agreement-summary.md", "frag": "store-reject-5min", "weight": "helpful", "why": "The 5-minute window is contractual; no product change can reclaim it."},
+        {"doc": "docs/14-brd-indore-expansion.md", "frag": "brd-rider-pool", "weight": "helpful", "why": "The root cause is rider capacity, seasonal in Indore — the thing the decision chose to fix instead."},
+        {"doc": "docs/25-rider-batching.md", "frag": "batch-max-3", "weight": "helpful", "why": "The tested ceiling a wider window would tempt people to raise; raising it means retesting."},
+        {"doc": "docs/14-brd-indore-expansion.md", "frag": "brd-festival-spike", "weight": "background", "why": "Indore demand spikes sharply in festival weeks while rider supply dips."},
+        {"doc": "docs/02-how-an-order-works.md", "frag": "order-clock", "weight": "background", "why": "Where the customer clock starts in the order lifecycle."},
+        {"doc": "docs/19-notification-rules.md", "frag": "quiet-hours", "weight": "background", "why": "Later deliveries interact with quiet hours; only 'rider arriving' may go out at night."}
+      ],
+      "telemetry": [
+        {"file": "telemetry/delivery-lateness.json", "look_at": "on_time_rate_by_city and indore_on_time_rate_by_hour", "why": "Indore at 84.2% on-time vs 96.2% Pune, with the pain concentrated 5-8 pm — the evidence that started the debate, and the numbers any fix must move.", "chart_idea": "On-time rate by city, and Indore's by-hour dip."}
+      ]
+    },
+    {
+      "id": "task-auto-substitution",
+      "title": "Make substitution suggestions automatic and smarter",
+      "story": "Roadmap Bet 2. A developer (or agent) is about to build automatic substitute suggestions. The rules that must not be broken live in the spec; the reality that must be respected lives in picker notes and incident history; and two payment rules silently constrain which substitutes are even allowed per order.",
+      "fragments": [
+        {"doc": "docs/08-substitutions-spec.md", "frag": "sub-veg-nonveg", "weight": "critical", "why": "The absolute line: never across veg/non-veg, baby food, or allergy items. No model or experiment may relax it."},
+        {"doc": "docs/08-substitutions-spec.md", "frag": "sub-ladder", "weight": "critical", "why": "The offer order (size swap, then brand swap, then nothing) is fixed; 'smarter' means better candidates within the ladder."},
+        {"doc": "docs/08-substitutions-spec.md", "frag": "sub-upi-cheaper-only", "weight": "critical", "why": "UPI orders may only get equal-or-cheaper substitutes — the candidate set depends on payment method, which almost everyone misses."},
+        {"doc": "docs/22-picker-field-notes.md", "frag": "picker-shelf-truth", "weight": "critical", "why": "The picker is the sensor; flows that make pickers argue with the database get worked around within a week."},
+        {"doc": "docs/10-item-ids-warning.md", "frag": "listing-uid-rule", "weight": "critical", "why": "Substitute mappings must key on listing_uid; store item codes get reused and will silently corrupt mappings."},
+        {"doc": "docs/18-data-dictionary.md", "frag": "dd-stock-estimates-30min", "weight": "helpful", "why": "Stock data is a 30-minute-old hint that can fail while looking healthy; suggestions must degrade gracefully."},
+        {"doc": "docs/08-substitutions-spec.md", "frag": "sub-price-cap-110", "weight": "helpful", "why": "The 110% price cap, and why it fits inside the 120% card hold."},
+        {"doc": "docs/08-substitutions-spec.md", "frag": "sub-timer-3min", "weight": "helpful", "why": "Three minutes is all the plan affords; 22% of prompts already time out to defaults."},
+        {"doc": "docs/09-weight-items-pricing.md", "frag": "weight-final-at-scale", "weight": "helpful", "why": "Substituting weighed items re-enters the weighing flow; prices are estimates until the scale."},
+        {"doc": "docs/17-support-playbook-refunds.md", "frag": "support-top-complaint-substitutes", "weight": "helpful", "why": "Wrong substitutes are the top human-handled complaint — the metric this work should move."},
+        {"doc": "docs/06-incident-2025-02-stale-stock.md", "frag": "incident-stock-lesson", "weight": "helpful", "why": "Why substitution is a core flow: stock can fail while looking healthy, and the product must degrade gracefully."},
+        {"doc": "docs/24-meera-notes.md", "frag": "meera-trust-picker", "weight": "background", "why": "The cultural one-liner behind all of it — from a stale, unowned doc, which is itself a trust signal to convey."},
+        {"doc": "docs/04-refunds-policy.md", "frag": "weight-credit-auto-100", "weight": "background", "why": "Cheaper substitutes on UPI turn into automatic credits under Rs.100."}
+      ],
+      "telemetry": [
+        {"file": "telemetry/stock-and-substitutions.json", "look_at": "substitution_offer_outcomes and oos_rate_by_category", "why": "Acceptance by category and swap type (size swaps beat brand swaps everywhere; baby care barely accepts at all), and where OOS actually happens (evening vegetables).", "chart_idea": "Acceptance rate by category split by swap type; morning vs evening OOS by category."},
+        {"file": "telemetry/refunds-summary.json", "look_at": "by_reason (unwanted_substitute) and sub_rule_broken_flags", "why": "The cost of getting it wrong today: 9,140 unwanted-substitute refunds a month, 41 broken-rule flags.", "chart_idea": "Refund reasons ranked; unwanted_substitute highlighted."}
+      ]
+    }
+  ]
+}

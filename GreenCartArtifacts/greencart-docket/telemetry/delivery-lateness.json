@@ -1,0 +1,24 @@
+{
+  "description": "Share of orders delivered within the 2-hour customer promise, by city and by hour of day. Customer clock (from order placed), per the delivery promise doc. Simulates the live ops dashboard.",
+  "window": {"from": "2026-06-16", "to": "2026-07-15"},
+  "generated_at": "2026-07-16T02:10:00Z",
+  "on_time_rate_by_city": [
+    {"city": "pune", "orders": 288400, "on_time_rate": 0.962, "median_delivery_minutes": 68},
+    {"city": "jaipur", "orders": 141900, "on_time_rate": 0.936, "median_delivery_minutes": 74},
+    {"city": "indore", "orders": 63250, "on_time_rate": 0.842, "median_delivery_minutes": 88}
+  ],
+  "indore_on_time_rate_by_hour": [
+    {"hour_ist": "10-11", "on_time_rate": 0.95},
+    {"hour_ist": "11-12", "on_time_rate": 0.94},
+    {"hour_ist": "12-13", "on_time_rate": 0.93},
+    {"hour_ist": "17-18", "on_time_rate": 0.83},
+    {"hour_ist": "18-19", "on_time_rate": 0.76},
+    {"hour_ist": "19-20", "on_time_rate": 0.79},
+    {"hour_ist": "20-21", "on_time_rate": 0.88}
+  ],
+  "notes": [
+    "Indore evening dip (5-8 pm IST) aligns with the rider capacity constraints described in the Indore BRD operating realities.",
+    "Indore takes no orders late evening because partner stores close at 9 pm; other cities serve later hours.",
+    "Rain-mode days are included; excluding them lifts Indore to 0.861."
+  ]
+}
