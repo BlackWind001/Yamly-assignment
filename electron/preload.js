@@ -9,5 +9,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     chrome: process.versions.chrome,
     electron: process.versions.electron
   },
-  ping: () => ipcRenderer.invoke('ping')
+  ping: () => ipcRenderer.invoke('ping'),
+  listDocuments: () => ipcRenderer.invoke('docs:list'),
+  readDocument: (id) => ipcRenderer.invoke('docs:read', id)
 });

@@ -63,10 +63,48 @@ function createWindow() {
   });
 }
 
-// IPC handler example
+const DOCS_DIR = path.join(__dirname, '../GreenCartArtifacts/greencart-docket/docs');
+
+function listDocuments() {
+  return fs.readdirSync(DOCS_DIR, { withFileTypes: true })
+    .filter((entry) => entry.isFile())
+    .map((entry) => ({
+      id: path.parse(entry.name).name,
+      filename: entry.name
+    }))
+    .sort((a, b) => a.id.localeCompare(b.id));
+}
+
+function readDocument(id) {
+  if (typeof id !== 'string' || !id || id.includes('..') || /[\\/]/.test(id)) {
+    return { found: false, content: null };
+  }
+
+  const match = fs.readdirSync(DOCS_DIR, { withFileTypes: true })
+    .find((entry) => entry.isFile() && path.parse(entry.name).name === id);
+
+  if (!match) {
+    return { found: false, content: null };
+  }
+
+  const resolved = path.resolve(DOCS_DIR, match.name);
+  const docsRoot = path.resolve(DOCS_DIR) + path.sep;
+  if (!resolved.startsWith(docsRoot)) {
+    return { found: false, content: null };
+  }
+
+  return {
+    found: true,
+    content: fs.readFileSync(resolved, 'utf-8')
+  };
+}
+
 ipcMain.handle('ping', async () => {
   return 'pong from Electron main process';
 });
+
+ipcMain.handle('docs:list', () => listDocuments());
+ipcMain.handle('docs:read', (_event, id) => readDocument(id));
 
 app.whenReady().then(() => {
   createWindow();
