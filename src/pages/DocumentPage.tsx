@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Markdown from 'react-markdown';
 import { useParams } from 'react-router-dom';
 
 export function DocumentPage() {
@@ -23,14 +24,13 @@ export function DocumentPage() {
     return <p>Loading...</p>;
   }
 
-  if (!found) {
+  if (!found || content === null) {
     return <h1>Document not found</h1>;
   }
 
   return (
-    <div>
-      <h1>Document {id}</h1>
-      <pre>{content}</pre>
-    </div>
+    <article className="markdown">
+      <Markdown>{content}</Markdown>
+    </article>
   );
 }
