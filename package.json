@@ -1,0 +1,35 @@
+{
+  "name": "yamly",
+  "version": "1.0.0",
+  "description": "Yamly Electron and React desktop application",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "concurrently -k \"vite\" \"wait-on tcp:5173 && node electron/run.js .\"",
+    "build": "tsc && vite build",
+    "start": "cross-env NODE_ENV=production node electron/run.js .",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "electron",
+    "react",
+    "vite"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.9",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^34.2.0",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0",
+    "wait-on": "^8.0.2"
+  }
+}
