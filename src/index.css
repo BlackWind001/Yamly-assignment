@@ -10,13 +10,63 @@
   padding: 0;
 }
 
-body {
-  min-height: 100vh;
-  padding: 2rem;
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
 }
 
 a {
   color: #93c5fd;
+}
+
+.workspace {
+  height: 100%;
+  width: 100%;
+}
+
+.workspace .dv-tabs-and-actions-container {
+  height: auto;
+  min-height: var(--dv-tabs-and-actions-container-height);
+  align-items: flex-start;
+}
+
+.workspace .dv-tabs-and-actions-container > .dv-pre-actions-container,
+.workspace .dv-tabs-and-actions-container > .dv-left-actions-container,
+.workspace .dv-tabs-and-actions-container > .dv-right-actions-container,
+.workspace .dv-tabs-and-actions-container > .dv-void-container {
+  height: var(--dv-tabs-and-actions-container-height);
+}
+
+.workspace .dv-scrollable {
+  height: auto;
+  overflow: visible;
+}
+
+.workspace .dv-scrollable .dv-scrollbar {
+  display: none;
+}
+
+.workspace .dv-tabs-container:not(.dv-tabs-container-vertical) {
+  flex-wrap: wrap;
+  height: auto;
+  overflow: visible;
+  align-content: flex-start;
+}
+
+.workspace .dv-tabs-container:not(.dv-tabs-container-vertical) .dv-tab {
+  height: var(--dv-tabs-and-actions-container-height);
+}
+
+.workspace .dv-scrollable > .dv-tabs-container {
+  overflow: visible;
+}
+
+.panel-body {
+  height: 100%;
+  overflow: auto;
+  padding: 1.5rem;
 }
 
 .markdown {

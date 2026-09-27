@@ -25,6 +25,8 @@ function createWindow() {
     mainWindow.show();
   });
 
+  mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+
   const devServerUrl = process.env.VITE_DEV_SERVER_URL || 
     (process.env.NODE_ENV === 'development' ? 'http://localhost:5173' : null);
 

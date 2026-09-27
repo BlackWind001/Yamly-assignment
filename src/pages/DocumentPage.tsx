@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import Markdown from 'react-markdown';
-import { useParams } from 'react-router-dom';
 
-export function DocumentPage() {
-  const { id } = useParams();
+export function DocumentPage({ id }: { id: string }) {
   const [found, setFound] = useState<boolean | null>(null);
   const [content, setContent] = useState<string | null>(null);
 
