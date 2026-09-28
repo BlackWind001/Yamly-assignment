@@ -111,34 +111,499 @@ a {
   padding: 1.5rem;
 }
 
-.markdown {
-  max-width: 48rem;
-  line-height: 1.6;
+.workspace-right .panel-body {
+  padding: 0;
 }
 
-.markdown h1,
-.markdown h2,
-.markdown h3 {
-  margin: 1.5rem 0 0.75rem;
-}
+/* =========================================================
+   Notion-style theme for rendered Markdown + search UI
+   Usage: wrap your rendered markdown in <article class="notion-page">
+   Values approximate Notion's current UI; tweak with DevTools.
+   ========================================================= */
 
-.markdown p,
-.markdown ul,
-.markdown ol,
-.markdown pre {
-  margin: 0.75rem 0;
-}
-
-.markdown ul,
-.markdown ol {
-  padding-left: 1.5rem;
-}
-
-.markdown pre,
-.markdown code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-}
-
-.markdown pre {
-  white-space: pre-wrap;
-}
+   :root {
+    /* Typography */
+    --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display",
+      "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+    --font-serif: "Lyon-Text", Georgia, ui-serif, serif;
+    --font-mono: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace;
+  
+    /* Core colors (light) */
+    --bg: #ffffff;
+    --bg-sidebar: #f7f7f5;
+    --text: #37352f;
+    --text-secondary: rgba(55, 53, 47, 0.65);
+    --text-tertiary: rgba(55, 53, 47, 0.45);
+    --border: rgba(55, 53, 47, 0.16);
+    --hover: rgba(55, 53, 47, 0.08);
+    --code-bg: #f7f6f3;
+    --inline-code-bg: rgba(135, 131, 120, 0.15);
+    --inline-code-text: #eb5757;
+    --link-underline: rgba(55, 53, 47, 0.4);
+    --callout-bg: #f1f1ef;
+    --highlight: #fbf3db;       /* yellow background — great for search hits */
+    --accent: #2383e2;          /* Notion blue */
+    --bg-elevated: #ffffff;     /* raised surfaces: switcher thumb, menus */
+    --shadow-raised: rgba(15, 15, 15, 0.1) 0 0 0 1px, rgba(15, 15, 15, 0.1) 0 2px 4px;
+    --shadow-modal: rgba(15, 15, 15, 0.05) 0 0 0 1px, rgba(15, 15, 15, 0.1) 0 5px 10px,
+      rgba(15, 15, 15, 0.2) 0 15px 40px;
+  
+    /* Notion's named colors (text / background) */
+    --gray: #787774;    --gray-bg: #f1f1ef;
+    --brown: #9f6b53;   --brown-bg: #f4eeee;
+    --orange: #d9730d;  --orange-bg: #fbecdd;
+    --yellow: #cb912f;  --yellow-bg: #fbf3db;
+    --green: #448361;   --green-bg: #edf3ec;
+    --blue: #337ea9;    --blue-bg: #e7f3f8;
+    --purple: #9065b0;  --purple-bg: #f6f3f9;
+    --pink: #c14c8a;    --pink-bg: #faf1f5;
+    --red: #d44c47;     --red-bg: #fdebec;
+  
+    /* Layout */
+    --page-width: 708px;        /* Notion default; "full width" ≈ 100% minus padding */
+    --page-padding-x: 96px;
+  }
+  
+  /* =========================================================
+     THEMES
+     - <html data-theme="light">  → always light
+     - <html data-theme="dark">   → always dark
+     - no data-theme / "system"   → follows the OS setting
+     ========================================================= */
+  
+  /* Light (explicit) — same values as :root, restated so it wins over the OS dark query */
+  :root, :root[data-theme="light"] {
+    color-scheme: light;
+  }
+  :root[data-theme="light"] {
+    --bg: #fbfaf7;              /* was #ffffff — warm paper white */
+    --bg-sidebar: #f4f3ef;      /* was #f7f7f5 — keeps the sidebar distinct from the page */
+    --code-bg: #f2f1ed;         /* was #f7f6f3 — code blocks still read as a block */
+    --callout-bg: #efeee9;      /* was #f1f1ef */
+    
+    --bg-elevated: #ffffff;
+    --shadow-raised: rgba(15, 15, 15, 0.1) 0 0 0 1px, rgba(15, 15, 15, 0.1) 0 2px 4px;
+    --text: #37352f;
+    --text-secondary: rgba(55, 53, 47, 0.65);
+    --text-tertiary: rgba(55, 53, 47, 0.45);
+    --border: rgba(55, 53, 47, 0.16);
+    --hover: rgba(55, 53, 47, 0.08);
+    --inline-code-bg: rgba(135, 131, 120, 0.15);
+    --inline-code-text: #eb5757;
+    --link-underline: rgba(55, 53, 47, 0.4);
+    --highlight: #fbf3db;
+    --shadow-modal: rgba(15, 15, 15, 0.05) 0 0 0 1px, rgba(15, 15, 15, 0.1) 0 5px 10px,
+      rgba(15, 15, 15, 0.2) 0 15px 40px;
+    --gray: #787774;    --gray-bg: #efeee9;  
+    --brown: #9f6b53;   --brown-bg: #f4eeee;
+    --orange: #d9730d;  --orange-bg: #fbecdd;
+    --yellow: #cb912f;  --yellow-bg: #fbf3db;
+    --green: #448361;   --green-bg: #edf3ec;
+    --blue: #337ea9;    --blue-bg: #e7f3f8;
+    --purple: #9065b0;  --purple-bg: #f6f3f9;
+    --pink: #c14c8a;    --pink-bg: #faf1f5;
+    --red: #d44c47;     --red-bg: #fdebec;
+  }
+  
+  /* Dark — defined once as a mixin-style block, applied two ways below */
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #191919;
+    --bg-sidebar: #202020;
+    --bg-elevated: #2f2f2f;       /* raised surfaces */
+    --shadow-raised: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.4) 0 2px 4px;
+    --text: rgba(255, 255, 255, 0.81);
+    --text-secondary: rgba(255, 255, 255, 0.46);
+    --text-tertiary: rgba(255, 255, 255, 0.28);
+    --border: rgba(255, 255, 255, 0.094);
+    --hover: rgba(255, 255, 255, 0.055);
+    --code-bg: #202020;
+    --inline-code-bg: rgba(135, 131, 120, 0.15);
+    --inline-code-text: #ff7369;
+    --link-underline: rgba(255, 255, 255, 0.4);
+    --callout-bg: #252525;
+    --highlight: #564328;
+    --accent: #2383e2;
+    --shadow-modal: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.3) 0 5px 10px,
+      rgba(0, 0, 0, 0.5) 0 15px 40px;
+    --gray: #9b9b9b;    --gray-bg: #2f2f2f;
+    --brown: #ba856f;   --brown-bg: #4a3228;
+    --orange: #c77d48;  --orange-bg: #5c3b23;
+    --yellow: #ca9849;  --yellow-bg: #564328;
+    --green: #529e72;   --green-bg: #243d30;
+    --blue: #5e87c9;    --blue-bg: #143a4e;
+    --purple: #9d68d3;  --purple-bg: #3c2d49;
+    --pink: #d15796;    --pink-bg: #4e2c3c;
+    --red: #df5452;     --red-bg: #522e2a;
+  }
+  
+  /* System mode: same dark values when the OS prefers dark and no explicit theme is set */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #191919;
+      --bg-sidebar: #202020;
+      --bg-elevated: #2f2f2f;
+      --shadow-raised: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.4) 0 2px 4px;
+      --text: rgba(255, 255, 255, 0.81);
+      --text-secondary: rgba(255, 255, 255, 0.46);
+      --text-tertiary: rgba(255, 255, 255, 0.28);
+      --border: rgba(255, 255, 255, 0.094);
+      --hover: rgba(255, 255, 255, 0.055);
+      --code-bg: #202020;
+      --inline-code-bg: rgba(135, 131, 120, 0.15);
+      --inline-code-text: #ff7369;
+      --link-underline: rgba(255, 255, 255, 0.4);
+      --callout-bg: #252525;
+      --highlight: #564328;
+      --shadow-modal: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.3) 0 5px 10px,
+        rgba(0, 0, 0, 0.5) 0 15px 40px;
+      --gray: #9b9b9b;    --gray-bg: #2f2f2f;
+      --brown: #ba856f;   --brown-bg: #4a3228;
+      --orange: #c77d48;  --orange-bg: #5c3b23;
+      --yellow: #ca9849;  --yellow-bg: #564328;
+      --green: #529e72;   --green-bg: #243d30;
+      --blue: #5e87c9;    --blue-bg: #143a4e;
+      --purple: #9d68d3;  --purple-bg: #3c2d49;
+      --pink: #d15796;    --pink-bg: #4e2c3c;
+      --red: #df5452;     --red-bg: #522e2a;
+    }
+  }
+  
+  /* Smooth switch without animating every hover */
+  html.theme-transition, html.theme-transition * {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
+  }
+  
+  /* Theme switcher control (Notion-style segmented menu) */
+  .theme-switch {
+    display: inline-flex;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 6px;
+    background: var(--hover);
+    font-size: 13px;
+  }
+  .theme-switch button {
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font: inherit;
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .theme-switch button:hover { color: var(--text); }
+  .theme-switch button[aria-pressed="true"] {
+    background: var(--bg-elevated);
+    color: var(--text);
+    box-shadow: var(--shadow-raised);
+  }
+  
+  /* ---------- Base ---------- */
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: auto;
+  }
+  
+  .notion-page {
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: 0 var(--page-padding-x) 30vh;
+    font-size: 16px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    caret-color: var(--text);
+  }
+  .notion-page.full-width { max-width: none; }
+  .notion-page.serif { font-family: var(--font-serif); }
+  .notion-page.mono  { font-family: var(--font-mono); }
+  .notion-page.small-text { font-size: 14px; }
+  
+  @media (max-width: 800px) {
+    .notion-page { padding-left: 24px; padding-right: 24px; }
+  }
+  
+  /* Every block gets ~1px vertical rhythm like Notion's block spacing */
+  .notion-page > * { margin-top: 2px; margin-bottom: 1px; }
+  
+  /* ---------- Title ---------- */
+  .notion-title {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 80px 0 16px;
+    padding: 3px 2px;
+  }
+  
+  /* ---------- Headings ---------- */
+  .notion-page h1, .notion-page h2, .notion-page h3 {
+    font-weight: 600;
+    line-height: 1.3;
+    padding: 3px 2px;
+    margin-bottom: 1px;
+  }
+  .notion-page h1 { font-size: 1.875em; margin-top: 2em; }
+  .notion-page h2 { font-size: 1.5em;   margin-top: 1.4em; }
+  .notion-page h3 { font-size: 1.25em;  margin-top: 1em; }
+  .notion-page h4, .notion-page h5, .notion-page h6 {
+    font-size: 1em; font-weight: 600; margin-top: 1em;
+  }
+  
+  /* ---------- Text ---------- */
+  .notion-page p { padding: 3px 2px; margin: 1px 0; min-height: 1em; }
+  .notion-page strong { font-weight: 600; }
+  .notion-page mark { background: var(--highlight); color: inherit; border-radius: 2px; }
+  
+  .notion-page a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--link-underline);
+    text-underline-offset: 2px;
+    transition: text-decoration-color 0.1s;
+  }
+  .notion-page a:hover { text-decoration-color: currentColor; }
+  
+  /* ---------- Inline code ---------- */
+  .notion-page :not(pre) > code {
+    font-family: var(--font-mono);
+    font-size: 85%;
+    line-height: normal;
+    color: var(--inline-code-text);
+    background: var(--inline-code-bg);
+    border-radius: 4px;
+    padding: 0.2em 0.4em;
+  }
+  
+  /* ---------- Code blocks ---------- */
+  .notion-page pre {
+    font-family: var(--font-mono);
+    font-size: 85%;
+    line-height: 1.5;
+    tab-size: 2;
+    background: var(--code-bg);
+    border-radius: 4px;
+    padding: 34px 16px 32px 32px;
+    margin: 4px 0;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .notion-page pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+  
+  /* ---------- Lists ---------- */
+  .notion-page ul, .notion-page ol { padding-left: 1.7em; margin: 1px 0; }
+  .notion-page li { padding: 3px 0 3px 2px; }
+  .notion-page li::marker { color: var(--text); }
+  .notion-page ul ul { list-style-type: circle; }
+  .notion-page ul ul ul { list-style-type: square; }
+  
+  /* To-do (GFM task lists) */
+  .notion-page li.task-list-item { list-style: none; margin-left: -1.5em; }
+  .notion-page input[type="checkbox"] {
+    width: 16px; height: 16px; margin: 0 8px 0 0;
+    vertical-align: -3px; accent-color: var(--accent);
+  }
+  .notion-page li.task-list-item.checked {
+    color: var(--text-tertiary);
+    text-decoration: line-through;
+    text-decoration-color: var(--text-tertiary);
+  }
+  
+  /* Images with transparency stay legible on dark */
+  :root[data-theme="dark"] .notion-page img.invert-on-dark { filter: invert(0.88) hue-rotate(180deg); }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .notion-page img.invert-on-dark { filter: invert(0.88) hue-rotate(180deg); }
+  }
+  
+  /* ---------- Quote ---------- */
+  .notion-page blockquote {
+    margin: 4px 0;
+    padding: 3px 14px;
+    border-left: 3px solid currentColor;
+    font-size: 1em;
+  }
+  .notion-page blockquote p { padding: 0; }
+  
+  /* ---------- Callout (e.g. > [!NOTE] or custom) ---------- */
+  .notion-callout {
+    display: flex;
+    gap: 8px;
+    background: var(--callout-bg);
+    border-radius: 4px;
+    padding: 16px 16px 16px 12px;
+    margin: 4px 0;
+  }
+  .notion-callout-icon { font-size: 1.2em; line-height: 1.3; flex-shrink: 0; }
+  
+  /* ---------- Toggle (use <details>/<summary>) ---------- */
+  .notion-page details { padding: 3px 2px; }
+  .notion-page summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .notion-page summary::-webkit-details-marker { display: none; }
+  .notion-page summary::before {
+    content: "▶";
+    font-size: 0.65em;
+    color: var(--text);
+    transition: transform 0.2s;
+    width: 1.2em;
+    text-align: center;
+  }
+  .notion-page details[open] > summary::before { transform: rotate(90deg); }
+  .notion-page details > *:not(summary) { padding-left: 1.6em; }
+  
+  /* ---------- Divider ---------- */
+  .notion-page hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 13px 0;
+  }
+  
+  /* ---------- Tables ---------- */
+  .notion-page table {
+    border-collapse: collapse;
+    margin: 8px 0;
+    font-size: 14px;
+    width: max-content;
+    max-width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  .notion-page th, .notion-page td {
+    border: 1px solid var(--border);
+    padding: 7px 9px;
+    min-width: 120px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .notion-page th {
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: transparent;
+  }
+  
+  /* ---------- Images ---------- */
+  .notion-page img { max-width: 100%; border-radius: 2px; display: block; margin: 8px auto; }
+  .notion-page figcaption { font-size: 14px; color: var(--text-secondary); padding: 6px 2px; }
+  
+  /* ---------- Color utilities (Notion's palette) ---------- */
+  .color-gray   { color: var(--gray); }   .bg-gray   { background: var(--gray-bg); }
+  .color-brown  { color: var(--brown); }  .bg-brown  { background: var(--brown-bg); }
+  .color-orange { color: var(--orange); } .bg-orange { background: var(--orange-bg); }
+  .color-yellow { color: var(--yellow); } .bg-yellow { background: var(--yellow-bg); }
+  .color-green  { color: var(--green); }  .bg-green  { background: var(--green-bg); }
+  .color-blue   { color: var(--blue); }   .bg-blue   { background: var(--blue-bg); }
+  .color-purple { color: var(--purple); } .bg-purple { background: var(--purple-bg); }
+  .color-pink   { color: var(--pink); }   .bg-pink   { background: var(--pink-bg); }
+  .color-red    { color: var(--red); }    .bg-red    { background: var(--red-bg); }
+  
+  /* =========================================================
+     Sidebar (document list)
+     ========================================================= */
+  .notion-sidebar {
+    width: 240px;
+    height: 100vh;
+    background: var(--bg-sidebar);
+    font-size: 14px;
+    color: var(--text-secondary);
+    padding: 8px 4px;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+  .notion-sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 30px;
+    padding: 0 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .notion-sidebar-item:hover { background: var(--hover); }
+  .notion-sidebar-item.active { background: var(--hover); color: var(--text); font-weight: 500; }
+  
+  /* =========================================================
+     Search (Notion's ⌘K / Ctrl+P modal)
+     ========================================================= */
+  .notion-search-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 15, 15, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 12vh;
+    z-index: 100;
+  }
+  .notion-search {
+    width: 100%;
+    max-width: 755px;
+    max-height: 70vh;
+    margin: 0 16px;
+    background: var(--bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow-modal);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .notion-search-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: 18px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .notion-search-input::placeholder { color: var(--text-tertiary); }
+  .notion-search-results { overflow-y: auto; padding: 6px; }
+  .notion-search-section {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    padding: 8px 10px 4px;
+  }
+  .notion-search-result {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .notion-search-result:hover,
+  .notion-search-result.selected { background: var(--hover); }
+  .notion-search-result-title { font-size: 14px; font-weight: 500; color: var(--text); }
+  .notion-search-result-snippet {
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* Highlight matched terms in results AND in the rendered doc */
+  .notion-search-result mark,
+  .search-hit {
+    background: var(--highlight);
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+  .search-hit.current { box-shadow: 0 0 0 2px var(--yellow); }
+  
+  /* Scrollbar, Notion-ish */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; border: 2px solid var(--bg); }
+  ::-webkit-scrollbar-track { background: transparent; }

@@ -1,6 +1,6 @@
 import {
   DockviewReact,
-  themeDark,
+  themeLight,
   type DockviewReadyEvent,
   type IDockviewPanelProps,
 } from 'dockview-react';
@@ -170,7 +170,7 @@ export function Workspace() {
           />
           <div className="workspace-right">
           <DockviewReact
-            theme={themeDark}
+            theme={themeLight}
             components={components}
             onReady={onReady}
             disableTabsOverflowList

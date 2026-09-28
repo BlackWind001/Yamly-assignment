@@ -40,7 +40,7 @@ export function DocumentPage({ id }: { id: string }) {
   }
 
   return (
-    <article className="markdown">
+    <article className="notion-page">
       {document.blocks.map((block, index) =>
         block.kind === 'fragment' ? (
           <div id={block.fragment.id} key={block.fragment.id}>
