@@ -6,6 +6,10 @@ export class WorkspaceController {
 
   open(path: string, options?: { split?: 'right' }) {
     const panel = pathToPanel(path);
+    if (panel.component !== 'document') {
+      return;
+    }
+
     const existing = this.api.getPanel(panel.id);
 
     if (existing) {

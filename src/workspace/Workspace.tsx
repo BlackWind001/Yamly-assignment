@@ -4,30 +4,13 @@ import {
   type DockviewReadyEvent,
   type IDockviewPanelProps,
 } from 'dockview-react';
-import { useLayoutEffect, useRef, type MouseEvent } from 'react';
+import { useLayoutEffect, useRef, useState, type MouseEvent, type PointerEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { DocumentPage } from '../pages/DocumentPage';
-import { HomePage } from '../pages/HomePage';
-import { SearchPage } from '../pages/SearchPage';
+import { LeftPane } from './LeftPane';
 import { WorkspaceController } from './WorkspaceController';
-import { hrefToPath, panelToPath } from './panelRoute';
+import { hrefToPath, isDocumentPath, panelToPath } from './panelRoute';
 import 'dockview-react/dist/styles/dockview.css';
-
-function HomePanel() {
-  return (
-    <div className="panel-body">
-      <HomePage />
-    </div>
-  );
-}
-
-function SearchPanel() {
-  return (
-    <div className="panel-body">
-      <SearchPage />
-    </div>
-  );
-}
 
 function DocumentPanel(props: IDockviewPanelProps<{ id: string }>) {
   return (
@@ -38,28 +21,42 @@ function DocumentPanel(props: IDockviewPanelProps<{ id: string }>) {
 }
 
 const components = {
-  home: HomePanel,
-  search: SearchPanel,
   document: DocumentPanel,
+};
+
+type QueuedOpen = {
+  path: string;
+  split?: 'right';
 };
 
 export function Workspace() {
   const location = useLocation();
   const navigate = useNavigate();
   const controllerRef = useRef<WorkspaceController | null>(null);
+  const queuedOpenRef = useRef<QueuedOpen | null>(null);
   const pathRef = useRef(location.pathname);
   pathRef.current = location.pathname;
+  const workspaceRef = useRef<HTMLDivElement>(null);
+  const leftWidthRef = useRef(320);
+  const [showRight, setShowRight] = useState(() => isDocumentPath(location.pathname));
+  const [leftWidth, setLeftWidth] = useState(320);
+  const [resizing, setResizing] = useState(false);
+  leftWidthRef.current = leftWidth;
 
   const onReady = (event: DockviewReadyEvent) => {
     const controller = new WorkspaceController(event.api);
     controllerRef.current = controller;
-    controller.open(pathRef.current);
+
+    const queued = queuedOpenRef.current;
+    queuedOpenRef.current = null;
+    if (queued && isDocumentPath(queued.path)) {
+      controller.open(queued.path, { split: queued.split });
+    } else if (isDocumentPath(pathRef.current)) {
+      controller.open(pathRef.current);
+    }
 
     event.api.onDidActivePanelChange(({ panel }) => {
       if (!panel) {
-        if (pathRef.current !== '/') {
-          navigate('/');
-        }
         return;
       }
 
@@ -68,10 +65,39 @@ export function Workspace() {
         navigate(path);
       }
     });
+
+    event.api.onDidRemovePanel(() => {
+      if (event.api.totalPanels > 0) {
+        return;
+      }
+
+      queueMicrotask(() => {
+        controllerRef.current = null;
+        setShowRight(false);
+        if (pathRef.current !== '/') {
+          navigate('/');
+        }
+      });
+    });
   };
 
   useLayoutEffect(() => {
-    controllerRef.current?.open(location.pathname);
+    if (!isDocumentPath(location.pathname)) {
+      controllerRef.current = null;
+      setShowRight(false);
+      return;
+    }
+
+    setShowRight(true);
+
+    if (controllerRef.current) {
+      controllerRef.current.open(location.pathname);
+      return;
+    }
+
+    if (!queuedOpenRef.current) {
+      queuedOpenRef.current = { path: location.pathname };
+    }
   }, [location.pathname]);
 
   const onClickCapture = (event: MouseEvent<HTMLDivElement>) => {
@@ -88,25 +114,74 @@ export function Workspace() {
     event.stopPropagation();
 
     const path = hrefToPath(anchor.getAttribute('href'));
-    if (!path) {
+    if (!path || !isDocumentPath(path)) {
       return;
     }
 
-    controllerRef.current?.open(path, { split: 'right' });
+    if (controllerRef.current) {
+      controllerRef.current.open(path, { split: 'right' });
+    } else {
+      queuedOpenRef.current = { path, split: 'right' };
+      setShowRight(true);
+    }
+
     if (path !== pathRef.current) {
       navigate(path);
     }
   };
 
+  const onResizePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const startX = event.clientX;
+    const startWidth = leftWidthRef.current;
+    setResizing(true);
+
+    const onMove = (moveEvent: globalThis.PointerEvent) => {
+      const workspaceWidth = workspaceRef.current?.clientWidth ?? 0;
+      const min = 240;
+      const max = Math.max(min, workspaceWidth - 240);
+      setLeftWidth(Math.min(max, Math.max(min, startWidth + moveEvent.clientX - startX)));
+    };
+
+    const onUp = () => {
+      setResizing(false);
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+    };
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  };
+
   return (
-    <div className="workspace" onClickCapture={onClickCapture}>
-      <DockviewReact
-        theme={themeDark}
-        components={components}
-        onReady={onReady}
-        disableTabsOverflowList
-        scrollbars="native"
-      />
+    <div
+      ref={workspaceRef}
+      className={`workspace${showRight ? ' has-right' : ''}${resizing ? ' resizing' : ''}`}
+      onClickCapture={onClickCapture}
+    >
+      <div className="workspace-left" style={showRight ? { width: leftWidth } : undefined}>
+        <LeftPane />
+      </div>
+      {showRight && (
+        <>
+          <div
+            className="workspace-resize"
+            onPointerDown={onResizePointerDown}
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="Resize left pane"
+          />
+          <div className="workspace-right">
+          <DockviewReact
+            theme={themeDark}
+            components={components}
+            onReady={onReady}
+            disableTabsOverflowList
+            scrollbars="native"
+          />
+          </div>
+        </>
+      )}
     </div>
   );
 }

@@ -23,6 +23,10 @@ export function pathToPanel(path: string): PanelDescriptor {
   return { id: 'home', component: 'home', title: 'Home' };
 }
 
+export function isDocumentPath(path: string): boolean {
+  return /^\/document\/[^/]+$/.test(path);
+}
+
 export function hrefToPath(href: string | null): string | null {
   if (!href) {
     return null;

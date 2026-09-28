@@ -22,8 +22,50 @@ a {
 }
 
 .workspace {
+  display: flex;
   height: 100%;
   width: 100%;
+}
+
+.workspace-left {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  overflow: auto;
+}
+
+.workspace.has-right .workspace-left {
+  flex: 0 0 auto;
+  min-width: 240px;
+}
+
+.workspace-resize {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 1px;
+  height: 100%;
+  background: rgb(68, 68, 68);
+  cursor: ew-resize;
+}
+
+.workspace-resize::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -1.5px;
+  width: 4px;
+}
+
+.workspace.resizing {
+  cursor: ew-resize;
+  user-select: none;
+}
+
+.workspace-right {
+  flex: 1 1 auto;
+  min-width: 240px;
+  height: 100%;
 }
 
 .workspace .dv-tabs-and-actions-container {
