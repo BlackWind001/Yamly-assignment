@@ -102,7 +102,7 @@ export function SearchPage() {
 
   function open(fragment: ShownFragment) {
     setSelected(fragment.key);
-    navigate(`/document/${fragment.docId}`);
+    navigate(`/document/${fragment.docId}?frag=${encodeURIComponent(fragment.label)}`);
   }
 
   return (

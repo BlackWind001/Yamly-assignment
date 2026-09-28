@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Markdown, { defaultUrlTransform } from 'react-markdown';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import {
   parseDocument,
   type DocumentBlock,
@@ -87,7 +87,9 @@ function DocumentHeader({ frontmatter }: { frontmatter: DocumentFrontmatter }) {
 
 export function DocumentPage() {
   const { id } = useParams();
+  const frag = useSearchParams()[0].get('frag');
   const [document, setDocument] = useState<DocumentState | null>(null);
+  const [highlighted, setHighlighted] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -113,6 +115,43 @@ export function DocumentPage() {
     };
   }, [id]);
 
+  useEffect(() => {
+    const target = frag && document?.found ? window.document.getElementById(frag) : null;
+    const scroller = target?.closest<HTMLElement>('.lib-doc-pane__scroll');
+    if (!target || !scroller) {
+      return;
+    }
+    // Vertical only: scrollIntoView would also scroll the pane sideways while it is still narrow.
+    const scroll = () => {
+      scroller.scrollTop += target.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
+    };
+    scroll();
+
+    // While the pane is opening its width animates and the text reflows; scroll again once it settles.
+    const pane = scroller.parentElement;
+    if (!pane?.getAnimations().length) {
+      return;
+    }
+    const onEnd = (event: TransitionEvent) => {
+      if (event.target === pane && event.propertyName === 'width') {
+        scroll();
+        pane.removeEventListener('transitionend', onEnd);
+      }
+    };
+    pane.addEventListener('transitionend', onEnd);
+    return () => pane.removeEventListener('transitionend', onEnd);
+  }, [document, frag]);
+
+  // The matched passage is washed briefly, then fades back (the background transition lives in .lib-doc-block).
+  useEffect(() => {
+    if (!frag || !document?.found) {
+      return;
+    }
+    setHighlighted(true);
+    const timer = setTimeout(() => setHighlighted(false), 3000);
+    return () => clearTimeout(timer);
+  }, [document, frag]);
+
   if (document === null) {
     return <p>Loading...</p>;
   }
@@ -126,7 +165,11 @@ export function DocumentPage() {
       <DocumentHeader frontmatter={document.frontmatter} />
       {withoutTitle(document.blocks, document.frontmatter.title).map((block, index) =>
         block.kind === 'fragment' ? (
-          <div id={block.fragment.id} key={block.fragment.id}>
+          <div
+            id={block.fragment.id}
+            key={block.fragment.id}
+            className={block.fragment.id === frag ? `lib-doc-block${highlighted ? ' is-match' : ''}` : undefined}
+          >
             <Markdown urlTransform={urlTransform}>{block.fragment.body}</Markdown>
           </div>
         ) : (
