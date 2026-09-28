@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Markdown from 'react-markdown';
+import Markdown, { defaultUrlTransform } from 'react-markdown';
 import { useParams } from 'react-router-dom';
 import {
   parseDocument,
@@ -12,6 +12,12 @@ type DocumentState = ({ found: true } & ParsedDocument) | { found: false };
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const FORMATS = { md: 'Markdown', docx: 'From .docx', pdf: 'From .pdf', txt: 'From .txt' };
+
+// Docs link to each other by filename ("03-payments-design.md"); route those inside the app.
+function urlTransform(url: string): string {
+  const doc = /^([\w-]+)\.md$/.exec(url);
+  return doc ? `#/document/${doc[1]}` : defaultUrlTransform(url);
+}
 
 // "2025-02-20" -> "20 Feb 2025" and "1 year ago"
 function formatUpdated(iso: string): { date: string; age: string } {
@@ -121,10 +127,10 @@ export function DocumentPage() {
       {withoutTitle(document.blocks, document.frontmatter.title).map((block, index) =>
         block.kind === 'fragment' ? (
           <div id={block.fragment.id} key={block.fragment.id}>
-            <Markdown>{block.fragment.body}</Markdown>
+            <Markdown urlTransform={urlTransform}>{block.fragment.body}</Markdown>
           </div>
         ) : (
-          <Markdown key={index}>{block.text}</Markdown>
+          <Markdown key={index} urlTransform={urlTransform}>{block.text}</Markdown>
         ),
       )}
     </article>
