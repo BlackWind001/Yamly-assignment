@@ -1,19 +1,108 @@
-import { useRef, useState, type SubmitEvent } from 'react';
+import { useEffect, useRef, useState, type SubmitEvent } from 'react';
+import Markdown from 'react-markdown';
+import { useNavigate, useParams } from 'react-router-dom';
+import { parseDocument, type DocumentFrontmatter } from '../document/parseDocument';
+import { getMockAnswer } from '../search/getMockAnswer';
+
+type ShownFragment = {
+  key: string;
+  docId: string;
+  body: string | null;
+  label: string;
+  frontmatter: DocumentFrontmatter;
+};
+
+function documentId(doc: string): string {
+  const name = doc.split('/').pop() ?? doc;
+  return name.endsWith('.md') ? name.slice(0, -3) : name;
+}
+
+function countLabel(fragments: ShownFragment[] | null, question: string): string {
+  if (fragments === null) return 'Searching…';
+  return `${fragments.length} ${fragments.length === 1 ? 'passage' : 'passages'} related to “${question}”`;
+}
 
 export function SearchPage() {
+  const { id: openId } = useParams();
+  const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [submitted, setSubmitted] = useState<string | null>(null);
+  const [fragments, setFragments] = useState<ShownFragment[] | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (submitted === null) {
+      return;
+    }
+
+    const answer = getMockAnswer(submitted);
+    if (!answer) {
+      setFragments([]);
+      return;
+    }
+
+    let cancelled = false;
+    setFragments(null);
+
+    const ids = [...new Set(answer.fragments.map((fragment) => documentId(fragment.doc)))];
+    Promise.all(
+      ids.map(async (id) => {
+        const result = await window.electronAPI.readDocument(id);
+        const parsed = result.found && result.content != null ? parseDocument(result.content) : null;
+        return [id, parsed] as const;
+      }),
+    )
+      .then((entries) => {
+        if (cancelled) {
+          return;
+        }
+        const byId = new Map(entries);
+        setFragments(
+          answer.fragments.map((fragment) => {
+            const docId = documentId(fragment.doc);
+            const parsed = byId.get(docId);
+            return {
+              key: `${fragment.doc}:${fragment.frag}`,
+              docId,
+              label: fragment.frag,
+              body: parsed?.fragments.find((item) => item.id === fragment.frag)?.body ?? null,
+              frontmatter: parsed?.frontmatter ?? {},
+            };
+          }),
+        );
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setFragments([]);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [submitted]);
 
   function onSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
+    inputRef.current?.blur();
     const q = query.trim();
-    if (q) setSubmitted(q);
+    if (!q) {
+      setSubmitted(null);
+      setFragments(null);
+      return;
+    }
+    setSubmitted(q);
   }
 
   function clear() {
     setQuery('');
     inputRef.current?.focus();
+  }
+
+  function open(fragment: ShownFragment) {
+    setSelected(fragment.key);
+    navigate(`/document/${fragment.docId}`);
   }
 
   return (
@@ -55,10 +144,48 @@ export function SearchPage() {
       </div>
       <div className="lib-results">
         <div className="lib-results__count" aria-live="polite">
-          {submitted !== null && `0 passages related to “${submitted}”`}
+          {submitted !== null && countLabel(fragments, submitted)}
         </div>
         <div className="lib-results__scroll">
-          <ul className="lib-results__list" />
+          <ul className="lib-results__list">
+            {fragments?.map((fragment) => {
+              const { title, status, last_updated } = fragment.frontmatter;
+              return (
+                <li key={fragment.key}>
+                  <button
+                    type="button"
+                    className="lib-result"
+                    aria-pressed={openId !== undefined && selected === fragment.key}
+                    onClick={() => open(fragment)}
+                  >
+                    <span className="lib-snippet">
+                      {fragment.body ? (
+                        // Buttons only allow inline content: keep emphasis, unwrap paragraphs, lists and links.
+                        <Markdown allowedElements={['strong', 'em', 'code']} unwrapDisallowed>
+                          {fragment.body}
+                        </Markdown>
+                      ) : (
+                        fragment.label
+                      )}
+                    </span>
+                    <span className="lib-result__meta">
+                      <span className="lib-breadcrumb" title={title ?? fragment.docId}>
+                        <span className="lib-breadcrumb__doc">{title ?? fragment.docId}</span>
+                      </span>
+                      <span className="lib-result__sub">
+                        {(status === 'stale' || status === 'abandoned') && (
+                          <span className={`lib-pill lib-pill--sm lib-pill--${status}`}>
+                            {status === 'stale' ? 'Stale' : 'Abandoned'}
+                          </span>
+                        )}
+                        {last_updated && <span>Updated {last_updated}</span>}
+                      </span>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </div>
     </aside>
