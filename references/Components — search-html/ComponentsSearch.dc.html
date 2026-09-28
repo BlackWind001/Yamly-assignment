@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Components — search</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./tokens.css">
+<link rel="stylesheet" href="./components.css">
+<link rel="stylesheet" href="./sheet.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="cmp-page" data-theme="light" style="width: 1280px; height: 10600px">
+
+<div class="cmp-intro">
+<div class="lib-eyebrow">Components · 2 of 3</div>
+<h1>Search</h1>
+<p>Everything in the search pane. Add <code>.has-results</code> to <code>.lib-search-pane</code> after the first search: the bar slides to the top, the heading and hint fold away, and results fade in. The column centres itself while the pane is wide and pins to a 28px gutter when it narrows.</p>
+</div>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Search block</h2>
+<p class="cmp-desc">Eyebrow, serif heading, search bar and hint, positioned in the pane. Before a search it sits in the middle; with <code>.has-results</code> it moves to the top and the heading and hint collapse. Previews show the block in place (static) without the absolute positioning.</p>
+<div class="cmp-classes"><code>.lib-search</code><code>.lib-search__hero</code><code>.lib-search__hero-inner</code><code>.lib-eyebrow</code><code>.lib-search__title</code><code>.lib-search__hint</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview cmp-preview--sunken" data-theme="{{th.id}}">
+<span class="cmp-theme">{{th.label}}</span>
+<div class="lib-search" style="position: static; width: auto; padding-top: 12px">
+<div class="lib-search__hero"><div class="lib-search__hero-inner"><div class="lib-eyebrow">Library</div><h1 class="lib-search__title">What are you looking for?</h1></div></div>
+<form class="lib-searchbar" role="search">
+<svg class="lib-searchbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+<label class="lib-sr-only" for="{{th.id}}-q1">Search documents</label>
+<input class="lib-searchbar__input" id="{{th.id}}-q1" type="search" placeholder="Search documents, notes, policies…">
+</form>
+<div class="lib-search__hint">Press Enter to search</div>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.search.copy}}">{{c.search.label}}</button></div><pre class="cmp-pre">{{c.search.css}}</pre></div>
+<div class="cmp-code"><div class="cmp-code-head"><span>HTML</span></div><pre class="cmp-pre">{{c.search.html}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Search bar</h2>
+<p class="cmp-desc">56px tall before a search, 46px after. Focus shows a soft ring on the whole bar rather than the input. The clear button only renders when there is text.</p>
+<div class="cmp-classes"><code>.lib-searchbar</code><code>.lib-searchbar__icon</code><code>.lib-searchbar__input</code><code>.lib-searchbar__clear</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview cmp-preview--sunken" data-theme="{{th.id}}">
+<span class="cmp-theme">{{th.label}}</span>
+<div class="cmp-stack">
+<span class="cmp-caption">Empty</span>
+<form class="lib-searchbar" role="search">
+<svg class="lib-searchbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+<label class="lib-sr-only" for="{{th.id}}-q2">Search documents</label>
+<input class="lib-searchbar__input" id="{{th.id}}-q2" type="search" placeholder="Search documents, notes, policies…">
+</form>
+<span class="cmp-caption">With a query, after a search (46px), focused</span>
+<form class="lib-searchbar" role="search" style="height: 46px; box-shadow: var(--focus-ring)">
+<svg class="lib-searchbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+<label class="lib-sr-only" for="{{th.id}}-q3">Search documents</label>
+<input class="lib-searchbar__input" id="{{th.id}}-q3" type="search" value="onboarding">
+<button type="button" class="lib-searchbar__clear" aria-label="Clear search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg></button>
+</form>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.searchbar.copy}}">{{c.searchbar.label}}</button></div><pre class="cmp-pre">{{c.searchbar.css}}</pre></div>
+<div class="cmp-code"><div class="cmp-code-head"><span>HTML</span></div><pre class="cmp-pre">{{c.searchbar.html}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Results region</h2>
+<p class="cmp-desc">Count bar with a full-width rule, then a scrolling list whose column lines up with the search bar. Fades and rises in 180ms after the bar starts moving.</p>
+<div class="cmp-classes"><code>.lib-results</code><code>.lib-results__count</code><code>.lib-results__scroll</code><code>.lib-results__list</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview cmp-preview--sunken" data-theme="{{th.id}}" style="padding: 0; overflow: hidden">
+<div class="lib-search-pane has-results" style="height: 300px">
+<div class="lib-results" style="inset: 16px 0 0">
+<div class="lib-results__count">8 passages related to “onboarding”</div>
+<div class="lib-results__scroll">
+<ul class="lib-results__list" style="padding-bottom: 16px">
+<li><button type="button" class="lib-result" aria-pressed="true"><span class="lib-snippet">…shipped your laptop. <mark class="lib-match">Most onboarding problems are access issues</mark>, and most take minutes to fix…</span><span class="lib-result__meta"><span class="lib-breadcrumb"><span class="lib-breadcrumb__doc">New-hire onboarding checklist</span><svg class="lib-breadcrumb__sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"></polyline></svg>Before your first day</span><span class="lib-result__sub"><span>Updated Aug 2026</span></span></span></button></li>
+<li><button type="button" class="lib-result"><span class="lib-snippet">…we surveyed the last three cohorts of <mark class="lib-match">new starters about their first month</mark> here.</span><span class="lib-result__meta"><span class="lib-breadcrumb"><span class="lib-breadcrumb__doc">Revamp kickoff: what new starters told us</span></span><span class="lib-result__sub"><span class="lib-pill lib-pill--sm lib-pill--abandoned">Abandoned</span><span>Updated Jun 2024</span></span></span></button></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.results.copy}}">{{c.results.label}}</button></div><pre class="cmp-pre">{{c.results.css}}</pre></div>
+<div class="cmp-code"><div class="cmp-code-head"><span>HTML</span></div><pre class="cmp-pre">{{c.results.html}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Result item</h2>
+<p class="cmp-desc">One button per result, four content shapes: a sentence (3 lines), a paragraph in the reading serif (5 lines), a chart thumbnail whose matching bars stay in the accent, and an image thumbnail with the matching region outlined. The selected result uses <code>aria-pressed="true"</code>.</p>
+<div class="cmp-classes"><code>.lib-result</code><code>.lib-snippet</code><code>.lib-snippet--paragraph</code><code>.lib-result__media</code><code>.lib-result__media-text</code><code>.lib-result__chart-title</code><code>.lib-thumb</code><code>.lib-thumb--chart</code><code>.lib-thumb__bar</code><code>.is-match</code><code>.lib-thumb--image</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview cmp-preview--sunken" data-theme="{{th.id}}" style="padding: 36px 12px 12px">
+<span class="cmp-theme">{{th.label}}</span>
+<div class="cmp-stack" style="gap: 2px">
+<button type="button" class="lib-result" aria-pressed="true"><span class="lib-snippet">…shipped your laptop. <mark class="lib-match">Most onboarding problems are access issues</mark>, and most take minutes to fix…</span><span class="lib-result__meta"><span class="lib-breadcrumb"><span class="lib-breadcrumb__doc">New-hire onboarding checklist</span><svg class="lib-breadcrumb__sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"></polyline></svg>Before your first day</span><span class="lib-result__sub"><span>Sentence · selected</span></span></span></button>
+<button type="button" class="lib-result"><span class="lib-snippet lib-snippet--paragraph">[Sample document] Your first month is about context, not output. Aim to <mark class="lib-match">ship one small, low-risk change in your first week</mark>, so you see the whole path from branch to production.</span><span class="lib-result__meta"><span class="lib-breadcrumb"><span class="lib-breadcrumb__doc">Your first 30 days as an engineer</span><svg class="lib-breadcrumb__sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"></polyline></svg>Your first week</span><span class="lib-result__sub"><span class="lib-pill lib-pill--sm lib-pill--stale">Stale</span><span>Paragraph</span></span></span></button>
+<button type="button" class="lib-result"><span class="lib-result__media"><span class="lib-thumb lib-thumb--chart" aria-hidden="true"><span class="lib-thumb__bar is-match" style="height: 40px"></span><span class="lib-thumb__bar" style="height: 45px"></span><span class="lib-thumb__bar" style="height: 50px"></span><span class="lib-thumb__bar is-match" style="height: 54px"></span></span><span class="lib-result__media-text"><span class="lib-result__chart-title">New-starter satisfaction by week</span><span>Satisfaction <mark class="lib-match">climbs from 58% in week one to 81%</mark> by week four.</span></span></span><span class="lib-result__meta"><span class="lib-result__sub"><span>Chart</span></span></span></button>
+<button type="button" class="lib-result"><span class="lib-result__media"><span class="lib-thumb lib-thumb--image" role="img" aria-label="Image with the matching area outlined"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span class="lib-region" style="left: 52%; top: 22%; width: 40%; height: 56%"></span></span><span class="lib-result__media-text">How buddies are <mark class="lib-match">paired with new starters</mark> across teams.</span></span><span class="lib-result__meta"><span class="lib-result__sub"><span>Image</span></span></span></button>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.result.copy}}">{{c.result.label}}</button></div><pre class="cmp-pre">{{c.result.css}}</pre></div>
+<div class="cmp-code"><div class="cmp-code-head"><span>HTML</span></div><pre class="cmp-pre">{{c.result.html}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Result location</h2>
+<p class="cmp-desc">Where the match lives: the document title, then each heading above the match, outermost first. A match before the first heading shows the title alone, with no separator. Long paths stay on one line and end in an ellipsis; put the full path in <code>title</code>. Status and date sit on the line below.</p>
+<div class="cmp-classes"><code>.lib-result__meta</code><code>.lib-breadcrumb</code><code>.lib-breadcrumb__doc</code><code>.lib-breadcrumb__sep</code><code>.lib-result__sub</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview cmp-preview--sunken" data-theme="{{th.id}}" style="padding-top: 36px">
+<span class="cmp-theme">{{th.label}}</span>
+<div class="cmp-stack" style="max-width: 384px; gap: 18px">
+<div class="cmp-stack" style="gap: 4px"><span class="cmp-caption">Nested sections</span>
+<span class="lib-result__meta"><span class="lib-breadcrumb"><span class="lib-breadcrumb__doc">Buddy program overview</span><svg class="lib-breadcrumb__sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"></polyline></svg>How pairing works<svg class="lib-breadcrumb__sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"></polyline></svg>Matching across teams</span><span class="lib-result__sub"><span>Updated Nov 2023</span></span></span></div>
+<div class="cmp-stack" style="gap: 4px"><span class="cmp-caption">No section — before the first heading</span>
+<span class="lib-result__meta"><span class="lib-breadcrumb"><span class="lib-breadcrumb__doc">Revamp kickoff: what new starters told us</span></span><span class="lib-result__sub"><span class="lib-pill lib-pill--sm lib-pill--abandoned">Abandoned</span><span>Updated Jun 2024</span></span></span></div>
+<div class="cmp-stack" style="gap: 4px"><span class="cmp-caption">Long path, truncated</span>
+<span class="lib-result__meta"><span class="lib-breadcrumb" title="Your first 30 days as an engineer › Reviews and releases › Rolling back a release safely"><span class="lib-breadcrumb__doc">Your first 30 days as an engineer</span><svg class="lib-breadcrumb__sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"></polyline></svg>Reviews and releases<svg class="lib-breadcrumb__sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"></polyline></svg>Rolling back a release safely</span><span class="lib-result__sub"><span class="lib-pill lib-pill--sm lib-pill--stale">Stale</span><span>Updated Feb 2025</span></span></span></div>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.location.copy}}">{{c.location.label}}</button></div><pre class="cmp-pre">{{c.location.css}}</pre></div>
+<div class="cmp-code"><div class="cmp-code-head"><span>HTML</span></div><pre class="cmp-pre">{{c.location.html}}</pre></div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":10600}}'>
+var CSS = {
+search: `.lib-search {
+  position: absolute;
+  z-index: 2;
+  top: 330px;
+  left: max(28px, calc(50% - var(--search-col-w) / 2));
+  width: min(var(--search-col-w), calc(100% - 56px));
+  transition: top var(--dur-slow) var(--ease-out), left var(--dur-layout) var(--ease-out), width var(--dur-layout) var(--ease-out);
+}
+.lib-search-pane.has-results .lib-search { top: 20px; }
+.lib-search__hero {
+  max-height: 120px;
+  overflow: hidden;
+  opacity: 1;
+  transition: max-height 420ms var(--ease-out), opacity 240ms ease;
+}
+.lib-search__hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding-bottom: var(--space-6);
+  text-align: center;
+}
+.lib-eyebrow {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.lib-search__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: var(--weight-regular);
+  font-size: 40px;
+  line-height: 1.15;
+  color: var(--color-text);
+}
+.lib-search__hint {
+  max-height: 40px;
+  overflow: hidden;
+  padding-top: 14px;
+  font-size: var(--text-sm);
+  text-align: center;
+  color: var(--color-text-muted);
+  transition: max-height 420ms var(--ease-out), opacity 200ms ease, padding 420ms var(--ease-out);
+}
+.lib-search-pane.has-results .lib-search__hero,
+.lib-search-pane.has-results .lib-search__hint { max-height: 0; padding-top: 0; opacity: 0; }`,
+searchbar: `.lib-searchbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 56px;
+  padding: 0 6px 0 14px;
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: height 420ms var(--ease-out), box-shadow var(--dur-fast) ease;
+}
+.lib-search-pane.has-results .lib-searchbar { height: 46px; }
+.lib-searchbar:focus-within { box-shadow: var(--focus-ring); }
+.lib-searchbar__icon { width: 18px; height: 18px; flex-shrink: 0; color: var(--color-text-muted); }
+.lib-searchbar__input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--color-text);
+}
+.lib-searchbar__input:focus-visible { box-shadow: none; }
+.lib-searchbar__input::placeholder { color: var(--color-text-placeholder); }
+.lib-searchbar__input::-webkit-search-cancel-button { display: none; }
+.lib-searchbar__clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+.lib-searchbar__clear:hover { background: var(--color-bg-sunken); color: var(--color-text); }
+.lib-searchbar__clear svg { width: 16px; height: 16px; }`,
+results: `.lib-results {
+  position: absolute;
+  inset: 84px 0 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(28px);
+  visibility: hidden;
+  transition: opacity var(--dur-base) ease, transform 480ms var(--ease-out), visibility 0s linear var(--dur-base);
+}
+.lib-search-pane.has-results .lib-results {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  transition-delay: 180ms, 180ms, 0s;
+}
+.lib-results__count {
+  padding: 4px max(28px, calc(50% - var(--search-col-w) / 2)) 10px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.lib-results__scroll { flex: 1; overflow-y: auto; }
+.lib-results__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: min(calc(var(--search-col-w) + 32px), calc(100% - 24px));
+  margin: 0 auto;
+  padding: var(--space-2) 0 72px;
+  list-style: none;
+}`,
+result: `.lib-result {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  padding: 14px var(--space-4);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dur-fast) ease;
+}
+.lib-result:hover { background: color-mix(in srgb, var(--color-bg-selected) 55%, transparent); }
+.lib-result[aria-pressed="true"] { background: var(--color-bg-selected); }
+.lib-snippet {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+.lib-snippet--paragraph {
+  -webkit-line-clamp: 5;
+  font-family: var(--font-serif);
+  font-size: 15.5px;
+}
+.lib-result__media { display: flex; align-items: center; gap: 14px; width: 100%; }
+.lib-result__media-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  font-size: var(--text-md);
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+.lib-result__chart-title { font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--color-text); }
+.lib-thumb {
+  position: relative;
+  flex-shrink: 0;
+  width: 104px;
+  height: 68px;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+.lib-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.lib-thumb--image { display: flex; align-items: center; justify-content: center; background: var(--color-bg-image); color: var(--color-text-faint); }
+.lib-thumb--chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  padding: 8px 10px 0;
+  background: var(--color-bg-raised);
+}
+.lib-thumb__bar { flex: 1; border-radius: 2px 2px 0 0; background: var(--color-accent-subtle); }
+.lib-thumb__bar.is-match { background: var(--color-accent); }`,
+location: `.lib-result__meta { display: flex; flex-direction: column; gap: 4px; width: 100%; min-width: 0; }
+.lib-breadcrumb {
+  display: block;
+  overflow: hidden;
+  font-size: 12.5px;
+  line-height: 1.4;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--color-text-emphasis);
+}
+.lib-breadcrumb__doc { font-weight: var(--weight-medium); color: var(--color-accent); }
+.lib-breadcrumb__sep {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin: 0 4px;
+  vertical-align: -1px;
+  color: var(--color-text-placeholder);
+}
+.lib-result__sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  font-size: var(--text-xs);
+  line-height: 1.35;
+  color: var(--color-text-muted);
+}`
+};
+var SEP = '<svg class="lib-breadcrumb__sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>';
+var HTML = {
+search: `<aside class="lib-search-pane" aria-label="Search">   <!-- add .has-results after the first search -->
+  <div class="lib-search">
+    <div class="lib-search__hero">
+      <div class="lib-search__hero-inner">
+        <div class="lib-eyebrow">Library</div>
+        <h1 class="lib-search__title">What are you looking for?</h1>
+      </div>
+    </div>
+    <form class="lib-searchbar" role="search">…</form>
+    <div class="lib-search__hint">Press Enter to search</div>
+  </div>
+  <div class="lib-results">…</div>
+</aside>`,
+searchbar: `<form class="lib-searchbar" role="search">
+  <svg class="lib-searchbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/>
+  </svg>
+  <label class="lib-sr-only" for="q">Search documents</label>
+  <input class="lib-searchbar__input" id="q" type="search" placeholder="Search documents, notes, policies…" autocomplete="off">
+  <!-- only when the input has text -->
+  <button type="button" class="lib-searchbar__clear" aria-label="Clear search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+      <line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>
+    </svg>
+  </button>
+</form>`,
+results: `<div class="lib-results">
+  <div class="lib-results__count">8 passages related to “onboarding”</div>
+  <div class="lib-results__scroll">
+    <ul class="lib-results__list">
+      <li><button type="button" class="lib-result">…</button></li>
+    </ul>
+  </div>
+</div>`,
+result: `<!-- Sentence -->
+<button type="button" class="lib-result" aria-pressed="true">
+  <span class="lib-snippet">…shipped your laptop. <mark class="lib-match">Most onboarding problems are access issues</mark>, and most…</span>
+  <span class="lib-result__meta">…location…</span>
+</button>
+
+<!-- Paragraph -->
+<button type="button" class="lib-result">
+  <span class="lib-snippet lib-snippet--paragraph">Your first month is about context… <mark class="lib-match">ship one small change</mark>…</span>
+  <span class="lib-result__meta">…</span>
+</button>
+
+<!-- Chart: bar heights inline, matching bars get .is-match -->
+<button type="button" class="lib-result">
+  <span class="lib-result__media">
+    <span class="lib-thumb lib-thumb--chart" aria-hidden="true">
+      <span class="lib-thumb__bar is-match" style="height: 40px"></span>
+      <span class="lib-thumb__bar" style="height: 45px"></span>
+      <span class="lib-thumb__bar is-match" style="height: 54px"></span>
+    </span>
+    <span class="lib-result__media-text">
+      <span class="lib-result__chart-title">New-starter satisfaction by week</span>
+      <span>Satisfaction <mark class="lib-match">climbs from 58% to 81%</mark> by week four.</span>
+    </span>
+  </span>
+  <span class="lib-result__meta">…</span>
+</button>
+
+<!-- Image -->
+<button type="button" class="lib-result">
+  <span class="lib-result__media">
+    <span class="lib-thumb lib-thumb--image">
+      <img src="…" alt="…">
+      <span class="lib-region" style="left: 52%; top: 22%; width: 40%; height: 56%"></span>
+    </span>
+    <span class="lib-result__media-text">How buddies are <mark class="lib-match">paired with new starters</mark>.</span>
+  </span>
+  <span class="lib-result__meta">…</span>
+</button>`,
+location: `<!-- In a section: one separator svg between parts -->
+<span class="lib-result__meta">
+  <span class="lib-breadcrumb" title="Buddy program overview › How pairing works › Matching across teams">
+    <span class="lib-breadcrumb__doc">Buddy program overview</span>SEP_SVGHow pairing worksSEP_SVGMatching across teams
+  </span>
+  <span class="lib-result__sub">
+    <span class="lib-pill lib-pill--sm lib-pill--stale">Stale</span>   <!-- only when stale or abandoned -->
+    <span>Updated Nov 2023</span>
+  </span>
+</span>
+
+<!-- Before the first heading: title only, no separator -->
+<span class="lib-breadcrumb"><span class="lib-breadcrumb__doc">Revamp kickoff: what new starters told us</span></span>`
+};
+HTML.location = HTML.location.split('SEP_SVG').join('\n    ' + SEP + '\n    ');
+
+class Component extends DCLogic {
+  renderVals() {
+    var s = this.state || {};
+    var self = this;
+    var c = {};
+    Object.keys(CSS).forEach(function (k) {
+      c[k] = {
+        css: CSS[k],
+        html: HTML[k] || '',
+        label: s.copied === k ? 'Copied' : 'Copy CSS',
+        copy: function () {
+          try { navigator.clipboard.writeText(CSS[k]); } catch (e) {}
+          self.setState({ copied: k });
+        }
+      };
+    });
+    return {
+      themes: [{ id: 'light', label: 'Light' }, { id: 'dark', label: 'Dark' }],
+      c: c
+    };
+  }
+}
+</script>
+</body>
+</html>

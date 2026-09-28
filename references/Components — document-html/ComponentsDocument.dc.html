@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Components — document</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./tokens.css">
+<link rel="stylesheet" href="./components.css">
+<link rel="stylesheet" href="./sheet.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="cmp-page" data-theme="light" style="width: 1280px; height: 21000px">
+
+<div class="cmp-intro">
+<div class="lib-eyebrow">Components · 3 of 3</div>
+<h1>Document</h1>
+<p>The document header plus every Markdown element. Markdown tags are styled as plain tags inside <code>.lib-doc</code>, so any renderer’s output works; only the header, code block chrome, callouts, table frame, chart and match wrapper need classes. Sizes come from <code>--doc-*</code> variables that change with the pane width. Previews use <code>.lib-doc--flush</code> to drop the page padding.</p>
+</div>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Document container and type scale</h2>
+<p class="cmp-desc">Sets the reading measure, padding and every size variable. Three steps by pane width: wide (880px and up), medium (560–879px), narrow (under 560px). Needs a size container above it; <code>.lib-doc-pane__scroll</code> is one.</p>
+<div class="cmp-classes"><code>.lib-doc</code><code>.lib-doc--flush</code><code>--doc-*</code></div>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.doc.copy}}">{{c.doc.label}}</button></div><pre class="cmp-pre">{{c.doc.css}}</pre></div>
+<div class="cmp-code"><div class="cmp-code-head"><span>HTML</span></div><pre class="cmp-pre">{{c.doc.html}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Document header</h2>
+<p class="cmp-desc">Built from front matter. Meta row: status, <code>last_updated</code> as a date and an age, <code>original_format</code>. Then the title and the author with the role taken from the brackets. Author and format are optional: leave their elements out when missing.</p>
+<div class="cmp-classes"><code>.lib-doc-header</code><code>.lib-doc-meta</code><code>.lib-doc-format</code><code>.lib-doc-title</code><code>.lib-byline</code><code>.lib-byline__avatar</code><code>.lib-byline__text</code><code>.lib-byline__name</code><code>.lib-byline__role</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview" data-theme="{{th.id}}" style="padding-top: 40px">
+<span class="cmp-theme">{{th.label}}</span>
+<div class="lib-doc lib-doc--flush">
+<header class="lib-doc-header">
+<div class="lib-doc-meta">
+<span class="lib-status-active">Active</span>
+<span>Updated <time datetime="2026-08-12">12 Aug 2026</time> · 1 month ago</span>
+<span class="lib-doc-format"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><polyline points="14 3 14 8 19 8"></polyline></svg>From .docx</span>
+</div>
+<h1 class="lib-doc-title" style="font-size: 36px">New-hire onboarding checklist</h1>
+<div class="lib-byline"><span class="lib-byline__avatar" aria-hidden="true">PN</span><span class="lib-byline__text"><span class="lib-byline__name">Priya Nair</span><span class="lib-byline__role">People Ops Lead</span></span></div>
+</header>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.header.copy}}">{{c.header.label}}</button></div><pre class="cmp-pre">{{c.header.css}}</pre></div>
+<div class="cmp-code"><div class="cmp-code-head"><span>HTML</span></div><pre class="cmp-pre">{{c.header.html}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Status banner</h2>
+<p class="cmp-desc">Under the byline when <code>status</code> is stale or abandoned, with <code>stale_reason</code> or <code>abandoned_reason</code> as the body. If the reason is missing, say “No reason was recorded.”</p>
+<div class="cmp-classes"><code>.lib-status-banner</code><code>--stale</code><code>--abandoned</code><code>__icon</code><code>__body</code><code>__title</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview" data-theme="{{th.id}}" style="padding-top: 40px">
+<span class="cmp-theme">{{th.label}}</span>
+<div class="lib-doc lib-doc--flush cmp-stack">
+<div class="lib-status-banner lib-status-banner--stale" role="note"><svg class="lib-status-banner__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg><div class="lib-status-banner__body"><strong class="lib-status-banner__title">Stale — may be out of date</strong><span>Written before the move to the new deploy pipeline. The release steps may no longer apply.</span></div></div>
+<div class="lib-status-banner lib-status-banner--abandoned" role="note"><svg class="lib-status-banner__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1"></rect><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"></path><line x1="10" y1="13" x2="14" y2="13"></line></svg><div class="lib-status-banner__body"><strong class="lib-status-banner__title">Abandoned — kept for reference only</strong><span>The onboarding revamp was paused in July 2024. The survey figures were never finalised.</span></div></div>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.banner.copy}}">{{c.banner.label}}</button></div><pre class="cmp-pre">{{c.banner.css}}</pre></div>
+<div class="cmp-code"><div class="cmp-code-head"><span>HTML</span></div><pre class="cmp-pre">{{c.banner.html}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Headings</h2>
+<p class="cmp-desc">Markdown <code>#</code> to <code>######</code>. Sans semibold so structure reads apart from the serif prose; more space above than below so each heading groups with its text. <code>h5</code> and <code>h6</code> become small caps labels.</p>
+<div class="cmp-classes"><code>.lib-doc h1 … h6</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview" data-theme="{{th.id}}" style="padding-top: 40px">
+<span class="cmp-theme">{{th.label}}</span>
+<div class="lib-doc lib-doc--flush">
+<h1>Heading 1 — Before day one</h1>
+<h2>Heading 2 — Set up your environment</h2>
+<h3>Heading 3 — Releases</h3>
+<h4>Heading 4 — Rolling back</h4>
+<h5>Heading 5 — Appendix</h5>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.headings.copy}}">{{c.headings.label}}</button></div><pre class="cmp-pre">{{c.headings.css}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Paragraphs and inline text</h2>
+<p class="cmp-desc">Body paragraphs, the optional lead paragraph, links, bold, italic, strikethrough, inline code and keyboard keys.</p>
+<div class="cmp-classes"><code>.lib-doc p</code><code>.lib-lead</code><code>a</code><code>strong</code><code>em</code><code>del</code><code>code</code><code>kbd</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview" data-theme="{{th.id}}" style="padding-top: 40px">
+<span class="cmp-theme">{{th.label}}</span>
+<div class="lib-doc lib-doc--flush">
+<p class="lib-lead">Your first month is about context, not output.</p>
+<p>Read the <a href="#">engineering handbook</a> and the <strong>security basics</strong> — they are <em>required</em>. Your username looks like <code>first.last</code>; the old <del>VPN client</del> is gone. Press <kbd>Ctrl</kbd> + <kbd>C</kbd> to stop a run.</p>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.text.copy}}">{{c.text.label}}</button></div><pre class="cmp-pre">{{c.text.css}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Lists and task lists</h2>
+<p class="cmp-desc">Bulleted, numbered and nested lists with muted markers. Task lists use the GFM class names most renderers already output; checked items fade and strike through.</p>
+<div class="cmp-classes"><code>ul</code><code>ol</code><code>li</code><code>.contains-task-list</code><code>.task-list-item</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview" data-theme="{{th.id}}" style="padding-top: 40px">
+<span class="cmp-theme">{{th.label}}</span>
+<div class="lib-doc lib-doc--flush">
+<ul><li>Confirm your laptop has arrived</li><li>Accept the invites to:<ul><li>Chat, calendar and email</li><li>The code host</li></ul></li></ul>
+<ol><li>Install the command-line tools.</li><li>Run the setup script.</li></ol>
+<ul class="contains-task-list"><li class="task-list-item"><input type="checkbox" checked="" disabled="" aria-label="Done"> Meet your buddy</li><li class="task-list-item"><input type="checkbox" disabled="" aria-label="Not done"> Ship one small change</li></ul>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.lists.copy}}">{{c.lists.label}}</button></div><pre class="cmp-pre">{{c.lists.css}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Blockquote</h2>
+<p class="cmp-desc">Italic serif, slightly larger than body, with a quiet rule.</p>
+<div class="cmp-classes"><code>blockquote</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview" data-theme="{{th.id}}" style="padding-top: 40px">
+<span class="cmp-theme">{{th.label}}</span>
+<div class="lib-doc lib-doc--flush"><blockquote><p>Ship something small in week one. The goal is to see the whole path from branch to production.</p></blockquote></div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.quote.copy}}">{{c.quote.label}}</button></div><pre class="cmp-pre">{{c.quote.css}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Code block</h2>
+<p class="cmp-desc">A frame with the language label and a copy button around the renderer’s <code>pre</code>. Never wraps; scrolls sideways inside the frame. Syntax colors use highlight.js class names.</p>
+<div class="cmp-classes"><code>.lib-codeblock</code><code>__header</code><code>__copy</code><code>pre</code><code>.hljs-*</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview" data-theme="{{th.id}}" style="padding-top: 40px">
+<span class="cmp-theme">{{th.label}}</span>
+<div class="lib-doc lib-doc--flush">
+<div class="lib-codeblock">
+<div class="lib-codeblock__header"><span>bash</span><button type="button" class="lib-codeblock__copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>Copy</button></div>
+<pre><code>{{sample.code}}</code></pre>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.code.copy}}">{{c.code.label}}</button></div><pre class="cmp-pre">{{c.code.css}}</pre></div>
+<div class="cmp-code"><div class="cmp-code-head"><span>HTML</span></div><pre class="cmp-pre">{{c.code.html}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Callouts</h2>
+<p class="cmp-desc">For GFM alerts (<code>&gt; [!NOTE]</code>, <code>&gt; [!WARNING]</code>). Sans text on a tinted panel with an icon and a colored title.</p>
+<div class="cmp-classes"><code>.lib-callout</code><code>--note</code><code>--warning</code><code>__icon</code><code>__body</code><code>__title</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview" data-theme="{{th.id}}" style="padding-top: 40px">
+<span class="cmp-theme">{{th.label}}</span>
+<div class="lib-doc lib-doc--flush">
+<div class="lib-callout lib-callout--note" role="note"><svg class="lib-callout__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12" y2="8"></line></svg><div class="lib-callout__body"><strong class="lib-callout__title">Note</strong><p>Setup takes about 20 minutes on a fresh machine.</p></div></div>
+<div class="lib-callout lib-callout--warning" role="note"><svg class="lib-callout__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 20h20L12 3z"></path><line x1="12" y1="10" x2="12" y2="14"></line><line x1="12" y1="17" x2="12" y2="17"></line></svg><div class="lib-callout__body"><strong class="lib-callout__title">Warning</strong><p>Never share production credentials in chat.</p></div></div>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.callout.copy}}">{{c.callout.label}}</button></div><pre class="cmp-pre">{{c.callout.css}}</pre></div>
+<div class="cmp-code"><div class="cmp-code-head"><span>HTML</span></div><pre class="cmp-pre">{{c.callout.html}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Table</h2>
+<p class="cmp-desc">Wrap the renderer’s <code>table</code> in <code>.lib-table-wrap</code>. Right-aligned columns get tabular numbers. On narrow panes the table keeps 520px and scrolls inside its frame, and <code>.lib-table-hint</code> appears.</p>
+<div class="cmp-classes"><code>.lib-table-wrap</code><code>table</code><code>th</code><code>td</code><code>.lib-table-hint</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview" data-theme="{{th.id}}" style="padding-top: 40px">
+<span class="cmp-theme">{{th.label}}</span>
+<div class="lib-doc lib-doc--flush">
+<div class="lib-table-wrap"><table><thead><tr><th>Topic</th><th>Owner</th><th align="right">Reply within</th></tr></thead><tbody><tr><td>Access and accounts</td><td>IT</td><td align="right">1 hr</td></tr><tr><td>Build failures</td><td>Platform team</td><td align="right">4 hr</td></tr><tr><td>Benefits</td><td>People Ops</td><td align="right">1 day</td></tr></tbody></table></div>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.table.copy}}">{{c.table.label}}</button></div><pre class="cmp-pre">{{c.table.css}}</pre></div>
+<div class="cmp-code"><div class="cmp-code-head"><span>HTML</span></div><pre class="cmp-pre">{{c.table.html}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Figure and image</h2>
+<p class="cmp-desc">Images fill the text width and keep their ratio, with a centred sans caption. Use <code>.lib-image-frame</code> when you need to overlay a <code>.lib-region</code>.</p>
+<div class="cmp-classes"><code>figure</code><code>img</code><code>figcaption</code><code>.lib-image-frame</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview" data-theme="{{th.id}}" style="padding-top: 24px">
+<span class="cmp-theme">{{th.label}}</span>
+<div class="lib-doc lib-doc--flush">
+<figure><div class="lib-image-frame" role="img" aria-label="Image placeholder" style="aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg-image); font-family: var(--font-sans); font-size: 13px; color: var(--color-text-muted)">[Image]</div><figcaption>How a change moves from your branch to production.</figcaption></figure>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.figure.copy}}">{{c.figure.label}}</button></div><pre class="cmp-pre">{{c.figure.css}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Toggle</h2>
+<p class="cmp-desc"><code>details</code> and <code>summary</code>, with a chevron that turns when open. The summary is at least 44px tall to be easy to hit.</p>
+<div class="cmp-classes"><code>details</code><code>summary</code><code>.lib-chevron</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview" data-theme="{{th.id}}" style="padding-top: 40px">
+<span class="cmp-theme">{{th.label}}</span>
+<div class="lib-doc lib-doc--flush">
+<details open=""><summary><svg class="lib-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"></polyline></svg>What if a release goes wrong?</summary><p>Roll back first, investigate second.</p></details>
+<details><summary><svg class="lib-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"></polyline></svg>Who approves a hotfix?</summary><p>The on-call lead.</p></details>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.details.copy}}">{{c.details.label}}</button></div><pre class="cmp-pre">{{c.details.css}}</pre></div>
+<div class="cmp-code"><div class="cmp-code-head"><span>HTML</span></div><pre class="cmp-pre">{{c.details.html}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Footnotes and divider</h2>
+<p class="cmp-desc">Footnote references are small sans superscripts; the GFM <code>.footnotes</code> section sits under its own rule in muted sans. <code>hr</code> is a single 1px line.</p>
+<div class="cmp-classes"><code>sup</code><code>.footnotes</code><code>hr</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview" data-theme="{{th.id}}" style="padding-top: 40px">
+<span class="cmp-theme">{{th.label}}</span>
+<div class="lib-doc lib-doc--flush">
+<p style="margin-bottom: 0">Releases go out on weekday mornings.<sup><a href="#fn1" id="{{th.id}}-ref1">1</a></sup></p>
+<section class="footnotes" style="margin-top: 24px; padding-top: 16px"><ol><li id="{{th.id}}-fn1">Release times are listed in the release calendar. <a href="#ref1" aria-label="Back to reference">↩</a></li></ol></section>
+<hr style="margin-bottom: 0">
+</div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.footnotes.copy}}">{{c.footnotes.label}}</button></div><pre class="cmp-pre">{{c.footnotes.css}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Chart</h2>
+<p class="cmp-desc">Bar chart figure: title, one-line summary, unit, bars with values above and labels below. When a search matched it, add <code>.is-match</code> to the chart and to the bars that matter; the rest dim.</p>
+<div class="cmp-classes"><code>.lib-chart</code><code>__head</code><code>__title</code><code>__summary</code><code>__meta</code><code>__plot</code><code>__col</code><code>__value</code><code>__bar</code><code>__labels</code><code>__label</code><code>.is-match</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview" data-theme="{{th.id}}" style="padding-top: 40px">
+<span class="cmp-theme">{{th.label}}</span>
+<figure class="lib-chart is-match">
+<figcaption class="lib-chart__head"><span class="lib-chart__title">New-starter satisfaction by week</span><span class="lib-chart__summary">Satisfaction <mark class="lib-match lib-match--strong">climbs from 58% in week one to 81%</mark> by week four.</span><span class="lib-chart__meta">Percent satisfied · [Sample data]</span></figcaption>
+<div class="lib-chart__plot">
+<div class="lib-chart__col is-match"><span class="lib-chart__value">58%</span><div class="lib-chart__bar" style="height: 123px"></div></div>
+<div class="lib-chart__col"><span class="lib-chart__value">66%</span><div class="lib-chart__bar" style="height: 138px"></div></div>
+<div class="lib-chart__col"><span class="lib-chart__value">74%</span><div class="lib-chart__bar" style="height: 154px"></div></div>
+<div class="lib-chart__col is-match"><span class="lib-chart__value">81%</span><div class="lib-chart__bar" style="height: 168px"></div></div>
+</div>
+<div class="lib-chart__labels"><span class="lib-chart__label">Week 1</span><span class="lib-chart__label">Week 2</span><span class="lib-chart__label">Week 3</span><span class="lib-chart__label">Week 4</span></div>
+</figure>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.chart.copy}}">{{c.chart.label}}</button></div><pre class="cmp-pre">{{c.chart.css}}</pre></div>
+<div class="cmp-code"><div class="cmp-code-head"><span>HTML</span></div><pre class="cmp-pre">{{c.chart.html}}</pre></div>
+</section>
+
+<section class="cmp-section">
+<div class="cmp-head">
+<h2 class="cmp-name">Search match in the document</h2>
+<p class="cmp-desc">When a document opens from a result, wrap the matched block in <code>.lib-doc-block.is-match</code> for a faint wash, and mark the key phrase with <code>.lib-match--strong</code>. The wash bleeds 16px past the text column.</p>
+<div class="cmp-classes"><code>.lib-doc-block</code><code>.is-match</code></div>
+</div>
+<div class="cmp-previews">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<div class="cmp-preview" data-theme="{{th.id}}" style="padding-top: 40px">
+<span class="cmp-theme">{{th.label}}</span>
+<div class="lib-doc lib-doc--flush">
+<div class="lib-doc-block"><p>Before your first morning, IT will have created your accounts and shipped your laptop.</p></div>
+<div class="lib-doc-block is-match"><p><mark class="lib-match lib-match--strong">Most onboarding problems are access issues</mark>, and most take minutes to fix if you raise them in the help channel.</p></div>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="cmp-code"><div class="cmp-code-head"><span>CSS</span><button type="button" class="cmp-copy" onClick="{{c.docmatch.copy}}">{{c.docmatch.label}}</button></div><pre class="cmp-pre">{{c.docmatch.css}}</pre></div>
+<div class="cmp-code"><div class="cmp-code-head"><span>HTML</span></div><pre class="cmp-pre">{{c.docmatch.html}}</pre></div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":21000}}'>
+var CSS = {
+doc: `.lib-doc {
+  --doc-title: 44px;  --doc-lead: 21px;
+  --doc-h1: 28px;     --doc-h2: 22px;   --doc-h3: 18px;  --doc-h4: 16px;
+  --doc-quote: 20px;  --doc-code: 14px; --doc-ui: 15px;
+  --doc-gap: 18px;    --doc-h-bottom: 12px;
+  --doc-h1-top: 48px; --doc-h2-top: 36px; --doc-h3-top: 28px;
+  --doc-hr: 40px;     --doc-fig: 32px;  --doc-callout-pad: 16px; --doc-quote-pad: 20px;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 72px 64px 120px;
+  font-family: var(--font-serif);
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--color-text-body);
+}
+@container (max-width: 879px) {
+  .lib-doc {
+    --doc-title: 38px; --doc-lead: 19px; --doc-h1: 25px; --doc-h2: 20px; --doc-h3: 17px; --doc-h4: 15px;
+    --doc-quote: 18px; --doc-code: 13.5px; --doc-ui: 14.5px; --doc-gap: 16px; --doc-h-bottom: 10px;
+    --doc-h1-top: 40px; --doc-h2-top: 30px; --doc-h3-top: 24px; --doc-hr: 32px; --doc-fig: 28px;
+    --doc-callout-pad: 14px; --doc-quote-pad: 18px;
+    max-width: 640px;
+    padding: 56px 40px 120px;
+    font-size: 17px;
+    line-height: 1.68;
+  }
+}
+@container (max-width: 559px) {
+  .lib-doc {
+    --doc-title: 30px; --doc-lead: 17px; --doc-h1: 22px; --doc-h2: 18px; --doc-h3: 16px; --doc-h4: 15px;
+    --doc-quote: 17px; --doc-code: 13px; --doc-ui: 14px; --doc-gap: 14px; --doc-h-bottom: 8px;
+    --doc-h1-top: 32px; --doc-h2-top: 26px; --doc-h3-top: 20px; --doc-hr: 28px; --doc-fig: 24px;
+    --doc-callout-pad: 12px; --doc-quote-pad: 14px;
+    max-width: none;
+    padding: 32px 20px 96px;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+}
+.lib-doc--flush { max-width: none; margin: 0; padding: 0; }`,
+header: `.lib-doc-header {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: var(--doc-gap);
+  font-family: var(--font-sans);
+}
+.lib-doc-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+.lib-doc-meta time { color: var(--color-text-emphasis); }
+.lib-doc-format { display: inline-flex; align-items: center; gap: 5px; }
+.lib-doc-format svg { width: 13px; height: 13px; }
+.lib-doc-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: var(--weight-regular);
+  font-size: var(--doc-title);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+.lib-byline { display: flex; align-items: center; gap: 10px; }
+.lib-byline__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-chip);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-emphasis);
+}
+.lib-byline__text { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; font-size: var(--text-md); }
+.lib-byline__name { font-weight: var(--weight-medium); color: var(--color-text); }
+.lib-byline__role { color: var(--color-text-muted); }`,
+banner: `.lib-status-banner {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--doc-callout-pad, 16px);
+  border: 1px solid;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--doc-ui, 15px);
+  line-height: 1.5;
+  color: var(--color-text);
+}
+.lib-status-banner--stale { border-color: var(--color-warn-border); background: var(--color-warn-bg); --banner-fg: var(--color-warn-fg); }
+.lib-status-banner--abandoned { border-color: var(--color-danger-border); background: var(--color-danger-bg); --banner-fg: var(--color-danger-fg); }
+.lib-status-banner__icon { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; color: var(--banner-fg); }
+.lib-status-banner__body { display: flex; flex-direction: column; gap: 2px; }
+.lib-status-banner__title { font-weight: var(--weight-semibold); color: var(--banner-fg); }`,
+headings: `.lib-doc h1, .lib-doc h2, .lib-doc h3, .lib-doc h4, .lib-doc h5, .lib-doc h6 {
+  margin: var(--doc-h2-top) 0 var(--doc-h-bottom);
+  font-family: var(--font-sans);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+}
+.lib-doc h1 { margin-top: var(--doc-h1-top); font-size: var(--doc-h1); line-height: 1.2; letter-spacing: -0.015em; }
+.lib-doc h2 { font-size: var(--doc-h2); line-height: 1.25; letter-spacing: -0.01em; }
+.lib-doc h3 { margin-top: var(--doc-h3-top); font-size: var(--doc-h3); line-height: 1.3; }
+.lib-doc h4 { margin-top: var(--doc-h3-top); margin-bottom: var(--space-2); font-size: var(--doc-h4); line-height: 1.35; }
+.lib-doc h5, .lib-doc h6 {
+  margin-top: var(--doc-h3-top);
+  margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.lib-doc :is(h1, h2, h3, h4, h5, h6):first-child { margin-top: 0; }`,
+text: `.lib-doc p { margin: 0 0 var(--doc-gap); }
+.lib-doc .lib-lead { font-size: var(--doc-lead); line-height: 1.55; color: var(--color-text-secondary); }
+.lib-doc a { color: var(--color-accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.lib-doc a:hover { color: var(--color-accent-hover); }
+.lib-doc strong { font-weight: var(--weight-semibold); color: var(--color-text); }
+.lib-doc del { color: var(--color-text-muted); }
+.lib-doc :not(pre) > code {
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--color-bg-muted);
+  font-family: var(--font-mono);
+  font-size: 0.84em;
+  color: var(--color-text-emphasis);
+  overflow-wrap: anywhere;
+}
+.lib-doc kbd {
+  padding: 1px 6px;
+  border: 1px solid var(--color-border-strong);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--color-bg-raised);
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  color: var(--color-text-emphasis);
+}`,
+lists: `.lib-doc ul, .lib-doc ol { margin: 0 0 var(--doc-gap); padding-left: 1.3em; }
+.lib-doc ol { padding-left: 1.5em; }
+.lib-doc li { margin-bottom: 6px; padding-left: 4px; }
+.lib-doc li::marker { color: var(--color-text-placeholder); }
+.lib-doc li > ul, .lib-doc li > ol { margin: 6px 0 0; }
+.lib-doc li > ul { list-style-type: circle; }
+.lib-doc li > p { margin-bottom: 6px; }
+/* GFM task lists: markdown-it / remark output these class names */
+.lib-doc .contains-task-list { display: flex; flex-direction: column; gap: var(--space-2); padding: 0; list-style: none; }
+.lib-doc .task-list-item { display: flex; align-items: flex-start; gap: 10px; margin: 0; padding: 0; }
+.lib-doc .task-list-item input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin: 0.3em 0 0;
+  accent-color: var(--color-accent);
+}
+.lib-doc .task-list-item:has(input:checked) {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--color-text-faint);
+}`,
+quote: `.lib-doc blockquote {
+  margin: 0 0 var(--doc-gap);
+  padding: 2px 0 2px var(--doc-quote-pad);
+  border-left: 3px solid var(--color-border-strong);
+  font-size: var(--doc-quote);
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--color-text-emphasis);
+}
+.lib-doc blockquote p:last-child { margin-bottom: 0; }`,
+code: `.lib-codeblock {
+  margin: 0 0 var(--doc-gap);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-sunken);
+}
+.lib-codeblock__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px 6px 14px;
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+.lib-codeblock__copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+.lib-codeblock__copy:hover { background: var(--color-bg-muted); color: var(--color-text); }
+.lib-codeblock__copy svg { width: 14px; height: 14px; }
+.lib-doc pre {
+  margin: 0 0 var(--doc-gap);
+  padding: 14px var(--space-4);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: var(--doc-code);
+  line-height: 1.65;
+  white-space: pre;
+  tab-size: 2;
+  color: var(--color-text);
+}
+.lib-codeblock pre { margin: 0; }
+.lib-doc pre code { padding: 0; background: none; font: inherit; color: inherit; }
+/* highlight.js class names */
+.hljs-comment, .hljs-quote { color: var(--code-comment); font-style: italic; }
+.hljs-keyword, .hljs-built_in, .hljs-title { color: var(--code-keyword); }
+.hljs-string, .hljs-attr, .hljs-regexp { color: var(--code-string); }
+.hljs-operator, .hljs-symbol, .hljs-number { color: var(--code-operator); }`,
+callout: `.lib-callout {
+  display: flex;
+  gap: var(--space-3);
+  margin: 0 0 var(--doc-gap);
+  padding: var(--doc-callout-pad);
+  border: 1px solid;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--doc-ui);
+  line-height: 1.55;
+  color: var(--color-text);
+}
+.lib-callout--note { border-color: var(--color-note-border); background: var(--color-note-bg); --callout-fg: var(--color-note-fg); }
+.lib-callout--warning { border-color: var(--color-warn-border); background: var(--color-warn-bg); --callout-fg: var(--color-warn-fg); }
+.lib-callout__icon { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; color: var(--callout-fg); }
+.lib-callout__body { display: flex; flex-direction: column; gap: 2px; }
+.lib-callout__title { font-weight: var(--weight-semibold); color: var(--callout-fg); }
+.lib-callout p { margin: 0; }`,
+table: `.lib-table-wrap {
+  margin: 0 0 var(--doc-gap);
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-raised);
+}
+.lib-doc table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+  font-size: var(--doc-ui);
+  line-height: 1.45;
+  color: var(--color-text);
+}
+.lib-doc th {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-sunken);
+  font-weight: var(--weight-semibold);
+  text-align: left;
+  white-space: nowrap;
+}
+.lib-doc td { padding: 10px 14px; border-bottom: 1px solid var(--color-border-subtle); }
+.lib-doc tr:last-child td { border-bottom: 0; }
+.lib-doc :is(th, td)[align="right"] { text-align: right; font-variant-numeric: tabular-nums; }
+.lib-table-hint { display: none; margin: calc(-1 * var(--doc-gap) + 8px) 0 var(--doc-gap); font-family: var(--font-sans); font-size: var(--text-xs); color: var(--color-text-muted); }
+@container (max-width: 559px) {
+  .lib-doc table { min-width: 520px; }
+  .lib-table-hint { display: block; }
+}`,
+figure: `.lib-doc figure { position: relative; margin: var(--doc-fig) 0; }
+.lib-doc img { display: block; max-width: 100%; height: auto; border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+.lib-doc figure img { width: 100%; }
+.lib-doc figcaption {
+  margin-top: 10px;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+.lib-image-frame { position: relative; }`,
+details: `.lib-doc details { margin: 0 0 var(--doc-gap); }
+.lib-doc summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  list-style: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: var(--doc-ui);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+.lib-doc summary::-webkit-details-marker { display: none; }
+.lib-chevron { width: 16px; height: 16px; flex-shrink: 0; color: var(--color-text-muted); transition: transform var(--dur-fast) ease; }
+.lib-doc details[open] > summary .lib-chevron { transform: rotate(90deg); }
+.lib-doc details > :not(summary) { margin-left: var(--space-6); }`,
+footnotes: `.lib-doc sup { font-family: var(--font-sans); font-size: 0.65em; line-height: 0; }
+.lib-doc sup a { padding: 0 2px; text-decoration: none; }
+.lib-doc .footnotes {
+  margin-top: var(--doc-hr);
+  padding-top: var(--doc-hr);
+  border-top: 1px solid var(--color-border);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+.lib-doc .footnotes ol { margin: 0; padding-left: 1.4em; }
+.lib-doc .footnotes a { text-decoration: none; }
+.lib-doc hr { height: 1px; margin: var(--doc-hr) 0; border: 0; background: var(--color-border); }`,
+chart: `.lib-chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-raised);
+  font-family: var(--font-sans);
+}
+.lib-chart__head { display: flex; flex-direction: column; gap: 4px; }
+.lib-chart__title { font-size: var(--text-base); font-weight: var(--weight-semibold); color: var(--color-text); }
+.lib-chart__summary { font-size: var(--text-md); line-height: 1.5; color: var(--color-text-secondary); }
+.lib-chart__meta { font-size: 12.5px; color: var(--color-text-muted); }
+.lib-chart__plot {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-5);
+  height: 210px;
+  padding: 0 var(--space-2);
+  border-bottom: 1px solid var(--color-border-strong);
+}
+.lib-chart__col { display: flex; flex: 1 1 0; flex-direction: column; align-items: center; gap: 6px; }
+.lib-chart__value { font-size: var(--text-sm); font-weight: var(--weight-medium); font-variant-numeric: tabular-nums; color: var(--color-text); }
+.lib-chart__bar { width: 100%; max-width: 72px; border-radius: 4px 4px 0 0; background: var(--color-accent); }
+.lib-chart__labels { display: flex; gap: var(--space-5); margin-top: calc(-1 * var(--space-2)); padding: 0 var(--space-2); }
+.lib-chart__label { flex: 1 1 0; text-align: center; font-size: 12.5px; color: var(--color-text-muted); }
+/* When a search matched this chart, dim the bars that are not part of the match */
+.lib-chart.is-match { border-color: var(--color-match-border); }
+.lib-chart.is-match .lib-chart__col:not(.is-match) .lib-chart__bar { background: var(--color-accent-subtle); }
+.lib-chart.is-match .lib-chart__col:not(.is-match) .lib-chart__value { color: var(--color-text-muted); }
+.lib-chart.is-match .lib-chart__col.is-match .lib-chart__value { font-weight: var(--weight-semibold); }`,
+docmatch: `.lib-doc-block {
+  margin: 0 calc(-1 * var(--space-4));
+  padding: 10px var(--space-4);
+  border-radius: var(--radius-lg);
+  transition: background 240ms ease;
+}
+.lib-doc-block.is-match { background: var(--color-match-block); }
+.lib-doc-block > :last-child { margin-bottom: 0; }`
+};
+var HTML = {
+doc: `<main class="lib-doc-pane">
+  <div class="lib-doc-pane__scroll">          <!-- container-type: inline-size -->
+    <article class="lib-doc">
+      <header class="lib-doc-header">…</header>
+      <!-- rendered Markdown goes here -->
+    </article>
+  </div>
+</main>`,
+header: `<header class="lib-doc-header">
+  <div class="lib-doc-meta">
+    <span class="lib-status-active">Active</span>                 <!-- or .lib-pill--stale / --abandoned -->
+    <span>Updated <time datetime="2026-08-12">12 Aug 2026</time> · 1 month ago</span>
+    <span class="lib-doc-format">                                 <!-- only if original_format -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><polyline points="14 3 14 8 19 8"/>
+      </svg>From .docx
+    </span>
+  </div>
+  <h1 class="lib-doc-title">New-hire onboarding checklist</h1>
+  <div class="lib-byline">                                         <!-- only if author -->
+    <span class="lib-byline__avatar" aria-hidden="true">PN</span>
+    <span class="lib-byline__text">
+      <span class="lib-byline__name">Priya Nair</span>
+      <span class="lib-byline__role">People Ops Lead</span>     <!-- only if the author has (Role) -->
+    </span>
+  </div>
+  <!-- .lib-status-banner here when status is stale or abandoned -->
+</header>`,
+banner: `<div class="lib-status-banner lib-status-banner--stale" role="note">
+  <svg class="lib-status-banner__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>
+  </svg>
+  <div class="lib-status-banner__body">
+    <strong class="lib-status-banner__title">Stale — may be out of date</strong>
+    <span>{stale_reason}</span>
+  </div>
+</div>
+
+<div class="lib-status-banner lib-status-banner--abandoned" role="note">
+  <svg class="lib-status-banner__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"/><line x1="10" y1="13" x2="14" y2="13"/>
+  </svg>
+  <div class="lib-status-banner__body">
+    <strong class="lib-status-banner__title">Abandoned — kept for reference only</strong>
+    <span>{abandoned_reason}</span>
+  </div>
+</div>`,
+code: `<div class="lib-codeblock">
+  <div class="lib-codeblock__header">
+    <span>bash</span>
+    <button type="button" class="lib-codeblock__copy">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>
+      </svg>Copy
+    </button>
+  </div>
+  <pre><code class="language-bash">…highlighted code…</code></pre>
+</div>`,
+callout: `<div class="lib-callout lib-callout--note" role="note">          <!-- --warning for [!WARNING] -->
+  <svg class="lib-callout__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12" y2="8"/>
+  </svg>
+  <div class="lib-callout__body">
+    <strong class="lib-callout__title">Note</strong>
+    <p>Setup takes about 20 minutes on a fresh machine.</p>
+  </div>
+</div>`,
+table: `<div class="lib-table-wrap">
+  <table>…renderer output…</table>
+</div>
+<p class="lib-table-hint">Scroll sideways to see all columns →</p>`,
+details: `<details>
+  <summary>
+    <svg class="lib-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="9 6 15 12 9 18"/>
+    </svg>
+    What if a release goes wrong?
+  </summary>
+  <p>Roll back first, investigate second.</p>
+</details>`,
+chart: `<figure class="lib-chart is-match">                  <!-- .is-match only when a search matched it -->
+  <figcaption class="lib-chart__head">
+    <span class="lib-chart__title">New-starter satisfaction by week</span>
+    <span class="lib-chart__summary">Satisfaction climbs from 58% to 81%.</span>
+    <span class="lib-chart__meta">Percent satisfied</span>
+  </figcaption>
+  <div class="lib-chart__plot">
+    <div class="lib-chart__col is-match">
+      <span class="lib-chart__value">58%</span>
+      <div class="lib-chart__bar" style="height: 123px"></div>   <!-- value / max × 160 + 8 -->
+    </div>
+    …
+  </div>
+  <div class="lib-chart__labels">
+    <span class="lib-chart__label">Week 1</span> …
+  </div>
+</figure>`,
+docmatch: `<div class="lib-doc-block is-match">
+  <p><mark class="lib-match lib-match--strong">Most onboarding problems are access issues</mark>, and most…</p>
+</div>`
+};
+var CODE_SAMPLE = '# Clone the repository and install dependencies\ngit clone git@github.com:[YOUR-ORG]/platform.git\ncd platform && make setup --profile="engineering"\n\n# Run the test suite once\nmake test';
+
+class Component extends DCLogic {
+  renderVals() {
+    var s = this.state || {};
+    var self = this;
+    var c = {};
+    Object.keys(CSS).forEach(function (k) {
+      c[k] = {
+        css: CSS[k],
+        html: HTML[k] || '',
+        label: s.copied === k ? 'Copied' : 'Copy CSS',
+        copy: function () {
+          try { navigator.clipboard.writeText(CSS[k]); } catch (e) {}
+          self.setState({ copied: k });
+        }
+      };
+    });
+    return {
+      themes: [{ id: 'light', label: 'Light' }, { id: 'dark', label: 'Dark' }],
+      sample: { code: CODE_SAMPLE },
+      c: c
+    };
+  }
+}
+</script>
+</body>
+</html>
