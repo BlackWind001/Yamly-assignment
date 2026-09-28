@@ -101,27 +101,24 @@ export function Workspace() {
   }, [location.pathname]);
 
   const onClickCapture = (event: MouseEvent<HTMLDivElement>) => {
-    if (!event.metaKey && !event.ctrlKey) {
-      return;
-    }
-
     const anchor = (event.target as HTMLElement).closest('a');
     if (!anchor) {
       return;
     }
-
-    event.preventDefault();
-    event.stopPropagation();
 
     const path = hrefToPath(anchor.getAttribute('href'));
     if (!path || !isDocumentPath(path)) {
       return;
     }
 
+    event.preventDefault();
+    event.stopPropagation();
+
+    const split = event.metaKey || event.ctrlKey;
     if (controllerRef.current) {
-      controllerRef.current.open(path, { split: 'right' });
+      controllerRef.current.open(path, split ? { split: 'right' } : undefined);
     } else {
-      queuedOpenRef.current = { path, split: 'right' };
+      queuedOpenRef.current = split ? { path, split: 'right' } : { path };
       setShowRight(true);
     }
 
