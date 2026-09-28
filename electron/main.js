@@ -8,7 +8,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1080,
     height: 720,
-    minWidth: 800,
+    minWidth: 900,
     minHeight: 550,
     backgroundColor: '#0f172a',
     title: 'Yamly',
