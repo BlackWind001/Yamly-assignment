@@ -25,27 +25,38 @@ a {
   display: flex;
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 
 .workspace-left {
-  flex: 1 1 auto;
+  flex: none;
+  width: 100%;
   min-width: 0;
   height: 100%;
   overflow: auto;
+  transition: width 0.3s ease;
 }
 
 .workspace.has-right .workspace-left {
-  flex: 0 0 auto;
+  width: var(--left-width, 320px);
   min-width: 240px;
 }
 
 .workspace-resize {
   position: relative;
   z-index: 2;
-  flex: 0 0 1px;
+  flex: none;
+  width: 0;
   height: 100%;
   background: rgb(68, 68, 68);
   cursor: ew-resize;
+  pointer-events: none;
+  transition: width 0.3s ease;
+}
+
+.workspace.has-right .workspace-resize {
+  width: 1px;
+  pointer-events: auto;
 }
 
 .workspace-resize::before {
@@ -62,10 +73,23 @@ a {
   user-select: none;
 }
 
+.workspace.resizing .workspace-left,
+.workspace.resizing .workspace-resize {
+  transition: none;
+}
+
 .workspace-right {
-  flex: 1 1 auto;
-  min-width: 240px;
+  flex: 1 1 0;
+  min-width: 0;
   height: 100%;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workspace-left,
+  .workspace-resize {
+    transition: none;
+  }
 }
 
 .workspace .dv-tabs-and-actions-container {
@@ -602,6 +626,49 @@ a {
     padding: 0 1px;
   }
   .search-hit.current { box-shadow: 0 0 0 2px var(--yellow); }
+
+  .search-panel {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0;
+  }
+  .search-page {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .search-page-spacer {
+    flex: 1 1 0px;
+    transition: flex-grow 0.4s ease;
+  }
+  .search-page.has-results .search-page-spacer {
+    flex-grow: 0;
+  }
+  .search-page-bar {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    flex: none;
+  }
+  .search-page .notion-search {
+    box-shadow: none;
+    position: static;
+    z-index: auto;
+  }
+  .search-page.has-results .search-page-results {
+    animation: search-results-in 0.35s ease;
+  }
+  .search-page-status {
+    padding: 1.5rem;
+    color: var(--text-secondary);
+  }
+  @keyframes search-results-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
   
   /* Scrollbar, Notion-ish */
   ::-webkit-scrollbar { width: 10px; height: 10px; }

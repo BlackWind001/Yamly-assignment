@@ -4,7 +4,16 @@ import {
   type DockviewReadyEvent,
   type IDockviewPanelProps,
 } from 'dockview-react';
-import { useLayoutEffect, useRef, useState, type MouseEvent, type PointerEvent } from 'react';
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type MouseEvent,
+  type PointerEvent,
+  type TransitionEvent,
+} from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { DocumentPage } from '../pages/DocumentPage';
 import { LeftPane } from './LeftPane';
@@ -39,9 +48,13 @@ export function Workspace() {
   const workspaceRef = useRef<HTMLDivElement>(null);
   const leftWidthRef = useRef(320);
   const [showRight, setShowRight] = useState(() => isDocumentPath(location.pathname));
+  const [rightMounted, setRightMounted] = useState(showRight);
+  const [rightOpen, setRightOpen] = useState(showRight);
+  const showRightRef = useRef(showRight);
   const [leftWidth, setLeftWidth] = useState(320);
   const [resizing, setResizing] = useState(false);
   leftWidthRef.current = leftWidth;
+  showRightRef.current = showRight;
 
   const onReady = (event: DockviewReadyEvent) => {
     const controller = new WorkspaceController(event.api);
@@ -72,7 +85,6 @@ export function Workspace() {
       }
 
       queueMicrotask(() => {
-        controllerRef.current = null;
         setShowRight(false);
         if (pathRef.current !== '/') {
           navigate('/');
@@ -83,7 +95,6 @@ export function Workspace() {
 
   useLayoutEffect(() => {
     if (!isDocumentPath(location.pathname)) {
-      controllerRef.current = null;
       setShowRight(false);
       return;
     }
@@ -99,6 +110,52 @@ export function Workspace() {
       queuedOpenRef.current = { path: location.pathname };
     }
   }, [location.pathname]);
+
+  useLayoutEffect(() => {
+    if (showRight) {
+      setRightMounted(true);
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setRightOpen(true);
+      }
+      return;
+    }
+
+    setRightOpen(false);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      controllerRef.current = null;
+      setRightMounted(false);
+    }
+  }, [showRight]);
+
+  useEffect(() => {
+    if (!showRight || !rightMounted) {
+      return;
+    }
+    const frame = requestAnimationFrame(() => setRightOpen(true));
+    return () => cancelAnimationFrame(frame);
+  }, [showRight, rightMounted]);
+
+  useEffect(() => {
+    if (showRight || !rightMounted || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+    const timeout = window.setTimeout(() => {
+      if (showRightRef.current) {
+        return;
+      }
+      controllerRef.current = null;
+      setRightMounted(false);
+    }, 450);
+    return () => clearTimeout(timeout);
+  }, [showRight, rightMounted]);
+
+  const onLeftTransitionEnd = (event: TransitionEvent<HTMLDivElement>) => {
+    if (event.propertyName !== 'width' || event.target !== event.currentTarget || showRightRef.current) {
+      return;
+    }
+    controllerRef.current = null;
+    setRightMounted(false);
+  };
 
   const onClickCapture = (event: MouseEvent<HTMLDivElement>) => {
     const anchor = (event.target as HTMLElement).closest('a');
@@ -153,13 +210,14 @@ export function Workspace() {
   return (
     <div
       ref={workspaceRef}
-      className={`workspace${showRight ? ' has-right' : ''}${resizing ? ' resizing' : ''}`}
+      className={`workspace${rightOpen ? ' has-right' : ''}${resizing ? ' resizing' : ''}`}
+      style={{ '--left-width': `${leftWidth}px` } as CSSProperties}
       onClickCapture={onClickCapture}
     >
-      <div className="workspace-left" style={showRight ? { width: leftWidth } : undefined}>
+      <div className="workspace-left" onTransitionEnd={onLeftTransitionEnd}>
         <LeftPane />
       </div>
-      {showRight && (
+      {rightMounted && (
         <>
           <div
             className="workspace-resize"
