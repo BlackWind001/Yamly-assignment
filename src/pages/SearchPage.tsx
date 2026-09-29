@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState, type SubmitEvent } from 'react';
+import { Fragment, useEffect, useRef, useState, type SubmitEvent } from 'react';
 import Markdown from 'react-markdown';
 import { useNavigate, useParams } from 'react-router-dom';
-import { parseDocument, type DocumentFrontmatter } from '../document/parseDocument';
+import { parseDocument, sectionPath, type DocumentFrontmatter } from '../document/parseDocument';
 import { getMockAnswer } from '../search/getMockAnswer';
 
 type ShownFragment = {
@@ -10,6 +10,7 @@ type ShownFragment = {
   body: string | null;
   label: string;
   frontmatter: DocumentFrontmatter;
+  sections: string[];
 };
 
 function documentId(doc: string): string {
@@ -68,6 +69,7 @@ export function SearchPage() {
               label: fragment.frag,
               body: parsed?.fragments.find((item) => item.id === fragment.frag)?.body ?? null,
               frontmatter: parsed?.frontmatter ?? {},
+              sections: parsed ? sectionPath(parsed.blocks, fragment.frag) : [],
             };
           }),
         );
@@ -169,8 +171,16 @@ export function SearchPage() {
                       )}
                     </span>
                     <span className="lib-result__meta">
-                      <span className="lib-breadcrumb" title={title ?? fragment.docId}>
+                      <span className="lib-breadcrumb" title={[title ?? fragment.docId, ...fragment.sections].join(' › ')}>
                         <span className="lib-breadcrumb__doc">{title ?? fragment.docId}</span>
+                        {fragment.sections.map((section) => (
+                          <Fragment key={section}>
+                            <svg className="lib-breadcrumb__sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                              <polyline points="9 6 15 12 9 18" />
+                            </svg>
+                            {section}
+                          </Fragment>
+                        ))}
                       </span>
                       <span className="lib-result__sub">
                         {(status === 'stale' || status === 'abandoned') && (

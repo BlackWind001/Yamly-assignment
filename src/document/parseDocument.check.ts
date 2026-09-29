@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { parseDocument } from './parseDocument.ts';
+import { parseDocument, sectionPath } from './parseDocument.ts';
 
 const docsDir = path.join(import.meta.dirname, '../../GreenCartArtifacts/greencart-docket/docs');
 const files = fs.readdirSync(docsDir).filter((name) => name.endsWith('.md'));
@@ -45,3 +45,12 @@ assert.equal(abandoned.frontmatter.status, 'abandoned');
 assert.match(abandoned.frontmatter.abandoned_reason ?? '', /no longer allowed/);
 assert.equal(abandoned.fragments[1].id, 'old-assumption-self-storage');
 assert.deepEqual(abandoned.fragments[1].topics, ['saved-cards', 'payments', 'outdated']);
+
+const payments = parseDocument(fs.readFileSync(path.join(docsDir, '03-payments-design.md'), 'utf8'));
+assert.deepEqual(sectionPath(payments.blocks, 'pay-hold-120'), [
+  "The core problem: we don't know the final price at checkout",
+  'Cards: hold now, charge later',
+]);
+assert.deepEqual(sectionPath(payments.blocks, 'pay-retry-attempt-id'), ['Retries: the rule written in blood']);
+assert.deepEqual(sectionPath(welcome.blocks, 'model-pickers-in-stores').includes('Welcome to GreenCart'), false);
+assert.deepEqual(sectionPath(payments.blocks, 'missing'), []);
