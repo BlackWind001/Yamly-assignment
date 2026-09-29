@@ -8,8 +8,8 @@ export function plainText(markdown: string): string {
     .trim();
 }
 
-// Splits text around the matched sentence. `lead` caps the text shown before it: sentence results keep a
-// short run-up so the match stays inside their 3-line clamp; paragraph results pass Infinity to show it all.
+// Splits text around the matched sentence. `lead` caps the text shown before it so the match stays inside
+// the 3-line clamp. Paragraph results do not use this; they show the paragraph with no sentence highlight.
 export function sentenceSnippet(
   text: string,
   sentence: string,

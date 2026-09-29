@@ -6,8 +6,8 @@ import { parseDocument } from '../document/parseDocument.ts';
 import { getMockAnswer } from './getMockAnswer.ts';
 import { plainText, sentenceSnippet } from './snippet.ts';
 
-// Every result quotes a sentence that is really in its fragment. Paragraph results show the paragraph from the
-// start, so their sentence must end early enough to survive the 5-line clamp in the narrow pane.
+// Every result quotes a sentence that is really in its fragment. Paragraph results show that paragraph
+// from the start, with no sentence highlight.
 const root = path.join(import.meta.dirname, '../../GreenCartArtifacts/greencart-docket');
 for (const task of tasksFile.tasks) {
   for (const fragment of task.fragments) {
@@ -17,11 +17,7 @@ for (const task of tasksFile.tasks) {
     assert.ok(fragment.match === 'sentence' || fragment.match === 'paragraph', fragment.frag);
     const text = plainText(body);
     assert.doesNotMatch(text, /\*\*|`|\]\(/, fragment.frag);
-    const at = text.indexOf(fragment.match_text);
-    assert.ok(at >= 0, `${fragment.frag}: ${fragment.match_text}`);
-    if (fragment.match === 'paragraph') {
-      assert.ok(at + fragment.match_text.length <= 260, `${fragment.frag} ends at ${at + fragment.match_text.length}`);
-    }
+    assert.ok(text.includes(fragment.match_text), `${fragment.frag}: ${fragment.match_text}`);
   }
 }
 assert.equal(plainText('A **token** from [payments](03-payments-design.md), keyed on `listing_uid`.'), 'A token from payments, keyed on listing_uid.');

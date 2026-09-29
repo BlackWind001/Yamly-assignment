@@ -12,7 +12,7 @@ type ShownFragment = {
   label: string;
   frontmatter: DocumentFrontmatter;
   sections: string[];
-  // The matched sentence, shown as a short excerpt ("sentence") or inside the whole paragraph ("paragraph").
+  // "sentence" highlights that sentence. "paragraph" shows the whole paragraph with no sentence highlight.
   match: string;
   matchText: string;
 };
@@ -171,7 +171,7 @@ export function SearchPage() {
               const { title, status, last_updated } = fragment.frontmatter;
               const text = fragment.body ? plainText(fragment.body) : fragment.label;
               const isParagraph = fragment.match === 'paragraph';
-              const parts = sentenceSnippet(text, fragment.matchText, isParagraph ? Infinity : undefined);
+              const parts = isParagraph ? null : sentenceSnippet(text, fragment.matchText);
               return (
                 <li key={fragment.key}>
                   <button
