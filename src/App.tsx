@@ -20,10 +20,10 @@ function Shell() {
   }, [theme]);
 
   const isOpen = id !== undefined || name !== undefined;
-  const className = ['lib-app', isOpen && 'is-open', isOpen && reading && 'is-reading', showAllFrags && 'show-frag-details']
+  const className = ['lib-app', isOpen && 'is-open', isOpen && reading && 'is-reading', showAllFrags && 'show-frag-tags']
     .filter(Boolean)
     .join(' ');
-  const allFragsLabel = showAllFrags ? 'Hide details for all parts' : 'Show details for all parts';
+  const allFragsLabel = showAllFrags ? 'Hide all fragment tags' : 'Show all fragment tags';
 
   function closeDocument() {
     setReading(false);
@@ -38,7 +38,7 @@ function Shell() {
           {isOpen && (
             <>
               <div className="lib-doc-toolbar">
-                {reading && (
+                {id !== undefined && (
                   <button
                     type="button"
                     className="lib-icon-btn"

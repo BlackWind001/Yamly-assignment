@@ -208,14 +208,7 @@ export function DocumentPage() {
             key={fragmentId}
             className={`lib-frag lib-frag--${weight}`}
           >
-            {/* Same details twice: inline normally, as a margin note on hover in reading mode (CSS picks). */}
-            <div className="lib-frag__meta">
-              <span className="lib-frag__weight">{WEIGHT_LABELS[weight]}</span>
-              {topics.map((topic) => (
-                <span key={topic} className="lib-frag__topic">{topic}</span>
-              ))}
-              <FragmentLink id={fragmentId} />
-            </div>
+            {/* Tags live in the left margin; hover or the toolbar tag button shows them. */}
             <div className="lib-frag__note">
               <span className="lib-frag__weight">{WEIGHT_LABELS[weight]}</span>
               <span className="lib-frag__note-topics">
