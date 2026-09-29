@@ -98,19 +98,28 @@ export function FragmentDetailsIcon() {
   return TAG_ICON;
 }
 
-type DocumentPageProps = {
-  // Reading mode: the toolbar's "show details for all parts" state, owned by the shell.
-  showAllFrags: boolean;
-  setShowAllFrags: (show: boolean) => void;
-};
+function FragmentLink({ id }: { id: string }) {
+  return (
+    <a
+      className="lib-frag__id"
+      href={`#${id}`}
+      title="Link to this part"
+      // A bare #hash would be read as a route by the hash router; scroll instead.
+      onClick={(event) => {
+        event.preventDefault();
+        window.document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }}
+    >
+      #{id}
+    </a>
+  );
+}
 
-export function DocumentPage({ showAllFrags, setShowAllFrags }: DocumentPageProps) {
+export function DocumentPage() {
   const { id } = useParams();
   const frag = useSearchParams()[0].get('frag');
   const [document, setDocument] = useState<DocumentState | null>(null);
   const [highlighted, setHighlighted] = useState(false);
-  // Reading mode: parts revealed one at a time with their margin button.
-  const [revealed, setRevealed] = useState<ReadonlySet<string>>(new Set());
 
   useEffect(() => {
     if (!id) {
@@ -120,7 +129,6 @@ export function DocumentPage({ showAllFrags, setShowAllFrags }: DocumentPageProp
 
     let cancelled = false;
     setDocument(null);
-    setRevealed(new Set());
     window.electronAPI.readDocument(id).then((result) => {
       if (cancelled) {
         return;
@@ -174,21 +182,6 @@ export function DocumentPage({ showAllFrags, setShowAllFrags }: DocumentPageProp
     return () => clearTimeout(timer);
   }, [document, frag]);
 
-  function toggleFragment(fragmentId: string) {
-    if (!document?.found) {
-      return;
-    }
-    if (showAllFrags || revealed.has(fragmentId)) {
-      // Revealed by "show all": turn it off but keep the other parts open, so only this one hides.
-      const next = new Set(showAllFrags ? document.fragments.map((fragment) => fragment.id) : revealed);
-      next.delete(fragmentId);
-      setRevealed(next);
-      setShowAllFrags(false);
-    } else {
-      setRevealed(new Set(revealed).add(fragmentId));
-    }
-  }
-
   if (document === null) {
     return <p>Loading...</p>;
   }
@@ -208,43 +201,29 @@ export function DocumentPage({ showAllFrags, setShowAllFrags }: DocumentPageProp
           );
         }
         const { id: fragmentId, weight, topics, body } = block.fragment;
-        const isRevealed = showAllFrags || revealed.has(fragmentId);
-        const toggleLabel = `${isRevealed ? 'Hide' : 'Show'} details for this part`;
         const content = <Markdown urlTransform={urlTransform}>{body}</Markdown>;
         return (
           <section
             id={fragmentId}
             key={fragmentId}
-            className={`lib-frag lib-frag--${weight}${revealed.has(fragmentId) ? ' is-revealed' : ''}`}
+            className={`lib-frag lib-frag--${weight}`}
           >
-            <button
-              type="button"
-              className="lib-frag__toggle"
-              aria-expanded={isRevealed}
-              aria-controls={fragmentId}
-              aria-label={toggleLabel}
-              title={toggleLabel}
-              onClick={() => toggleFragment(fragmentId)}
-            >
-              {TAG_ICON}
-            </button>
+            {/* Same details twice: inline normally, as a margin note on hover in reading mode (CSS picks). */}
             <div className="lib-frag__meta">
               <span className="lib-frag__weight">{WEIGHT_LABELS[weight]}</span>
               {topics.map((topic) => (
                 <span key={topic} className="lib-frag__topic">{topic}</span>
               ))}
-              <a
-                className="lib-frag__id"
-                href={`#${fragmentId}`}
-                title="Link to this part"
-                // A bare #hash would be read as a route by the hash router; scroll instead.
-                onClick={(event) => {
-                  event.preventDefault();
-                  window.document.getElementById(fragmentId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }}
-              >
-                #{fragmentId}
-              </a>
+              <FragmentLink id={fragmentId} />
+            </div>
+            <div className="lib-frag__note">
+              <span className="lib-frag__weight">{WEIGHT_LABELS[weight]}</span>
+              <span className="lib-frag__note-topics">
+                {topics.map((topic) => (
+                  <span key={topic} className="lib-frag__topic">{topic}</span>
+                ))}
+              </span>
+              <FragmentLink id={fragmentId} />
             </div>
             {fragmentId === frag ? (
               <div className={`lib-doc-block${highlighted ? ' is-match' : ''}`}>{content}</div>

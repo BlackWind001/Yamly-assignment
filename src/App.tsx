@@ -81,7 +81,7 @@ function Shell() {
                   </button>
                 )}
               </div>
-              <DocumentPage showAllFrags={showAllFrags} setShowAllFrags={setShowAllFrags} />
+              <DocumentPage />
             </>
           )}
         </div>
