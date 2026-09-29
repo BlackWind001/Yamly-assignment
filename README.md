@@ -38,7 +38,7 @@ You type what you are doing and press Enter. `1`, `2`, or `3` picks a task by nu
 | `2`, `Indore` | Evaluate a wider delivery window for Indore | delivery lateness |
 | `3`, `substitutions` | Make substitution suggestions automatic and smarter | stock and substitutions, refunds |
 
-> **[screenshot: search-home]** The prompt, before a query.
+![The search prompt, before a query](assets/search.png)
 
 #### Passages
 
@@ -46,7 +46,7 @@ Results are the tagged passages for that task, with a count such as "12 passages
 
 > **Why.** You pick from the passages that matter for this task, and the count shows how small that set is, so you start from the part itself. *The few parts inside the document.*
 
-> **[screenshot: search-results]** Results for a task: telemetry tiles, then passages with the match highlighted.
+![Search results: a telemetry tile, then passages. Sentence matches are highlighted; a paragraph match shows the whole paragraph.](assets/search-with-results.png)
 
 ### Where the part came from
 
@@ -84,7 +84,7 @@ The matched passage scrolls into view and is highlighted. The highlight fades af
 
 > **Why.** The document opens already on the passage you chose, so you can read the context around it immediately. The highlight fades, and the page is left as something to read. *Land on that part, in its original place.*
 
-> **[screenshot: document]** A document open beside search, matched passage highlighted.
+![The document open beside the results, already scrolled to the matched passage](assets/search-with-results-and-doc.png)
 
 #### Close
 
@@ -118,7 +118,7 @@ The telemetry view says why the file is attached to this search, what to look at
 
 > **Why.** Beside the chart you can read why these numbers belong to your search and which figure to look at, then open the raw table when the chart is not the whole story. *The same trust check for a live chart, and a way further in.*
 
-> **[screenshot: telemetry]** A telemetry file open, with its charts and the note on why it is attached.
+![Delivery lateness open in the document pane: why it is attached, then the charts](assets/telemetry-with-chart-open.png)
 
 ### Calm when you are just reading
 
@@ -128,7 +128,9 @@ Each tagged passage carries a weight (Critical, Helpful, Background), its topics
 
 > **Why.** You can see how much a passage matters, and jump to a pointer for it, only when you ask: on hover, or with the tags turned on. Critical is the part you cannot afford to miss. Background is the part you can skip. The column you are reading stays text. *Cues there when they matter, and out of the way while you read.*
 
-> **[screenshot: fragment-tags]** The same document with fragment tags visible.
+![One fragment note, shown beside the passage it belongs to](assets/fragment-tags-single.png)
+
+![Every fragment tag turned on](assets/fragment-tags-all.png)
 
 #### Reading mode
 
@@ -136,7 +138,9 @@ Hides the search pane and the theme toggle, and the document fills the window. L
 
 > **Why.** With the search and the controls gone, the window is just the document, as direct as reading a text file. Leaving reading mode puts you back on the same page, with the tools beside it again. *Reading straight through feels like a plain document.*
 
-> **[screenshot: reading-mode]** Reading mode, search pane hidden.
+![Reading mode. The search pane is hidden and the document fills the window, with its status, date, format, and author at the top.](assets/reading-mode.png)
+
+![The same reading view with every fragment tag turned on](assets/reading-mode-with-all-frags-enabled.png)
 
 ### Basic UX
 
@@ -146,7 +150,7 @@ Light or dark, starting from the system setting. The toggle sits at the bottom l
 
 > **What it is.** UX delight. The page follows the light or dark of the room you are working in.
 
-> **[screenshot: dark]** Any of the screens above, in dark theme.
+![The same split view in the light theme. The other screenshots above are the dark theme.](assets/light-theme.png)
 
 #### Clear search
 
@@ -167,10 +171,6 @@ In the app, with `npm run dev`:
 7. Search `nope`. Confirm you still get one of the three tasks.
 8. Toggle the theme, then clear the search field.
 
-Three check scripts cover the data behind the UI. Each exits 0 when it passes. They check that every task fragment is a real passage, that the queries above (and a few misses) map to the right task, that all 30 documents parse, and that every chart builds from its JSON file.
+## Note to the reviewer
 
-```sh
-node --experimental-strip-types src/search/getMockAnswer.check.ts
-node --experimental-strip-types src/document/parseDocument.check.ts
-node --experimental-strip-types src/telemetry/charts.check.ts
-```
+Since this was primarily built with AI and you might want to understand how I build using AI, I am attaching my Claude design session link which will give you a hint at my process: https://claude.ai/artifact/MYvND4gPJhvgBtCD6pwMmn
