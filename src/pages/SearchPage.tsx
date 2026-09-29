@@ -3,6 +3,7 @@ import Markdown from 'react-markdown';
 import { useNavigate, useParams } from 'react-router-dom';
 import { parseDocument, sectionPath, type DocumentFrontmatter } from '../document/parseDocument';
 import { getMockAnswer } from '../search/getMockAnswer';
+import { TelemetryTiles } from '../telemetry/Telemetry';
 
 type ShownFragment = {
   key: string;
@@ -24,7 +25,7 @@ function countLabel(fragments: ShownFragment[] | null, question: string): string
 }
 
 export function SearchPage() {
-  const { id: openId } = useParams();
+  const { id: openId, name: openTelemetry } = useParams();
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [submitted, setSubmitted] = useState<string | null>(null);
@@ -102,6 +103,8 @@ export function SearchPage() {
     inputRef.current?.focus();
   }
 
+  const telemetry = submitted === null ? [] : (getMockAnswer(submitted)?.telemetry ?? []);
+
   function open(fragment: ShownFragment) {
     setSelected(fragment.key);
     navigate(`/document/${fragment.docId}?frag=${encodeURIComponent(fragment.label)}`);
@@ -150,6 +153,15 @@ export function SearchPage() {
         </div>
         <div className="lib-results__scroll">
           <ul className="lib-results__list">
+            {fragments !== null && telemetry.length > 0 && (
+              <li>
+                <TelemetryTiles
+                  refs={telemetry}
+                  openName={openTelemetry}
+                  onOpen={(name) => navigate(`/telemetry/${name}?q=${encodeURIComponent(submitted ?? '')}`)}
+                />
+              </li>
+            )}
             {fragments?.map((fragment) => {
               const { title, status, last_updated } = fragment.frontmatter;
               return (

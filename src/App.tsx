@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import { HashRouter, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { DocumentPage, FragmentDetailsIcon } from './pages/DocumentPage';
 import { SearchPage } from './pages/SearchPage';
+import { TelemetryView } from './telemetry/Telemetry';
 
 type Theme = 'light' | 'dark';
 
 function Shell() {
-  const { id } = useParams();
+  const { id, name } = useParams();
   const navigate = useNavigate();
   const [reading, setReading] = useState(false);
   const [showAllFrags, setShowAllFrags] = useState(false);
@@ -18,7 +19,7 @@ function Shell() {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
 
-  const isOpen = id !== undefined;
+  const isOpen = id !== undefined || name !== undefined;
   const className = ['lib-app', isOpen && 'is-open', isOpen && reading && 'is-reading', showAllFrags && 'show-frag-details']
     .filter(Boolean)
     .join(' ');
@@ -81,7 +82,7 @@ function Shell() {
                   </button>
                 )}
               </div>
-              <DocumentPage />
+              {name !== undefined ? <TelemetryView /> : <DocumentPage />}
             </>
           )}
         </div>
@@ -112,6 +113,7 @@ export function App() {
         <Route element={<Shell />}>
           <Route path="/search" element={null} />
           <Route path="/document/:id" element={null} />
+          <Route path="/telemetry/:name" element={null} />
         </Route>
       </Routes>
     </HashRouter>
