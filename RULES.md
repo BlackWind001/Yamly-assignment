@@ -1,1 +1,0 @@
-1. Do not use the browser tool since it crashes the application sometimes.

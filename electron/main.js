@@ -8,7 +8,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1080,
     height: 720,
-    minWidth: 800,
+    minWidth: 900,
     minHeight: 550,
     backgroundColor: '#0f172a',
     title: 'Yamly',
@@ -24,8 +24,6 @@ function createWindow() {
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
   });
-
-  mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
 
   const devServerUrl = process.env.VITE_DEV_SERVER_URL || 
     (process.env.NODE_ENV === 'development' ? 'http://localhost:5173' : null);

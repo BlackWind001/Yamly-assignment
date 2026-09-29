@@ -117,3 +117,26 @@ export function parseDocument(raw: string): ParsedDocument {
 
   return { frontmatter, fragments, blocks };
 }
+
+// Headings above a fragment, outermost first. Skips the level-1 title, which the doc title already shows.
+export function sectionPath(blocks: DocumentBlock[], fragmentId: string): string[] {
+  const path: { level: number; text: string }[] = [];
+  for (const block of blocks) {
+    if (block.kind === 'fragment' && block.fragment.id === fragmentId) {
+      return path.map((heading) => heading.text);
+    }
+    const text = block.kind === 'markdown' ? block.text : block.fragment.body;
+    for (const line of text.split(/\r?\n/)) {
+      const heading = /^(#{2,6})\s+(.+?)\s*#*\s*$/.exec(line);
+      if (!heading) {
+        continue;
+      }
+      const level = heading[1].length;
+      while (path.length && path.at(-1)!.level >= level) {
+        path.pop();
+      }
+      path.push({ level, text: heading[2] });
+    }
+  }
+  return [];
+}
