@@ -85,11 +85,32 @@ function DocumentHeader({ frontmatter }: { frontmatter: DocumentFrontmatter }) {
   );
 }
 
-export function DocumentPage() {
+const WEIGHT_LABELS = { critical: 'Critical', helpful: 'Helpful', background: 'Background' };
+
+const TAG_ICON = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z" />
+    <circle cx="7.5" cy="7.5" r="1.5" />
+  </svg>
+);
+
+export function FragmentDetailsIcon() {
+  return TAG_ICON;
+}
+
+type DocumentPageProps = {
+  // Reading mode: the toolbar's "show details for all parts" state, owned by the shell.
+  showAllFrags: boolean;
+  setShowAllFrags: (show: boolean) => void;
+};
+
+export function DocumentPage({ showAllFrags, setShowAllFrags }: DocumentPageProps) {
   const { id } = useParams();
   const frag = useSearchParams()[0].get('frag');
   const [document, setDocument] = useState<DocumentState | null>(null);
   const [highlighted, setHighlighted] = useState(false);
+  // Reading mode: parts revealed one at a time with their margin button.
+  const [revealed, setRevealed] = useState<ReadonlySet<string>>(new Set());
 
   useEffect(() => {
     if (!id) {
@@ -99,6 +120,7 @@ export function DocumentPage() {
 
     let cancelled = false;
     setDocument(null);
+    setRevealed(new Set());
     window.electronAPI.readDocument(id).then((result) => {
       if (cancelled) {
         return;
@@ -152,6 +174,21 @@ export function DocumentPage() {
     return () => clearTimeout(timer);
   }, [document, frag]);
 
+  function toggleFragment(fragmentId: string) {
+    if (!document?.found) {
+      return;
+    }
+    if (showAllFrags || revealed.has(fragmentId)) {
+      // Revealed by "show all": turn it off but keep the other parts open, so only this one hides.
+      const next = new Set(showAllFrags ? document.fragments.map((fragment) => fragment.id) : revealed);
+      next.delete(fragmentId);
+      setRevealed(next);
+      setShowAllFrags(false);
+    } else {
+      setRevealed(new Set(revealed).add(fragmentId));
+    }
+  }
+
   if (document === null) {
     return <p>Loading...</p>;
   }
@@ -163,19 +200,61 @@ export function DocumentPage() {
   return (
     <article className="lib-doc">
       <DocumentHeader frontmatter={document.frontmatter} />
-      {withoutTitle(document.blocks, document.frontmatter.title).map((block, index) =>
-        block.kind === 'fragment' ? (
-          <div
-            id={block.fragment.id}
-            key={block.fragment.id}
-            className={block.fragment.id === frag ? `lib-doc-block${highlighted ? ' is-match' : ''}` : undefined}
+      <hr className="lib-doc-divider" />
+      {withoutTitle(document.blocks, document.frontmatter.title).map((block, index) => {
+        if (block.kind !== 'fragment') {
+          return (
+            <Markdown key={index} urlTransform={urlTransform}>{block.text}</Markdown>
+          );
+        }
+        const { id: fragmentId, weight, topics, body } = block.fragment;
+        const isRevealed = showAllFrags || revealed.has(fragmentId);
+        const toggleLabel = `${isRevealed ? 'Hide' : 'Show'} details for this part`;
+        const content = <Markdown urlTransform={urlTransform}>{body}</Markdown>;
+        return (
+          <section
+            id={fragmentId}
+            key={fragmentId}
+            className={`lib-frag lib-frag--${weight}${revealed.has(fragmentId) ? ' is-revealed' : ''}`}
           >
-            <Markdown urlTransform={urlTransform}>{block.fragment.body}</Markdown>
-          </div>
-        ) : (
-          <Markdown key={index} urlTransform={urlTransform}>{block.text}</Markdown>
-        ),
-      )}
+            <button
+              type="button"
+              className="lib-frag__toggle"
+              aria-expanded={isRevealed}
+              aria-controls={fragmentId}
+              aria-label={toggleLabel}
+              title={toggleLabel}
+              onClick={() => toggleFragment(fragmentId)}
+            >
+              {TAG_ICON}
+            </button>
+            <div className="lib-frag__meta">
+              <span className="lib-frag__weight">{WEIGHT_LABELS[weight]}</span>
+              {topics.map((topic) => (
+                <span key={topic} className="lib-frag__topic">{topic}</span>
+              ))}
+              <a
+                className="lib-frag__id"
+                href={`#${fragmentId}`}
+                title="Link to this part"
+                // A bare #hash would be read as a route by the hash router; scroll instead.
+                onClick={(event) => {
+                  event.preventDefault();
+                  window.document.getElementById(fragmentId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+              >
+                #{fragmentId}
+              </a>
+            </div>
+            {fragmentId === frag ? (
+              <div className={`lib-doc-block${highlighted ? ' is-match' : ''}`}>{content}</div>
+            ) : (
+              content
+            )}
+          </section>
+        );
+      })}
     </article>
   );
 }
+

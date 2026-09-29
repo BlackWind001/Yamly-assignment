@@ -588,6 +588,7 @@
   --doc-gap: 18px;    --doc-h-bottom: 12px;
   --doc-h1-top: 48px; --doc-h2-top: 36px; --doc-h3-top: 28px;
   --doc-hr: 40px;     --doc-fig: 32px;  --doc-callout-pad: 16px; --doc-quote-pad: 20px;
+  --doc-frag-offset: 24px;
   max-width: 680px;
   margin: 0 auto;
   padding: 72px 64px 120px;
@@ -601,7 +602,7 @@
     --doc-title: 38px; --doc-lead: 19px; --doc-h1: 25px; --doc-h2: 20px; --doc-h3: 17px; --doc-h4: 15px;
     --doc-quote: 18px; --doc-code: 13.5px; --doc-ui: 14.5px; --doc-gap: 16px; --doc-h-bottom: 10px;
     --doc-h1-top: 40px; --doc-h2-top: 30px; --doc-h3-top: 24px; --doc-hr: 32px; --doc-fig: 28px;
-    --doc-callout-pad: 14px; --doc-quote-pad: 18px;
+    --doc-callout-pad: 14px; --doc-quote-pad: 18px; --doc-frag-offset: 22px;
     max-width: 640px;
     padding: 56px 40px 120px;
     font-size: 17px;
@@ -613,7 +614,7 @@
     --doc-title: 30px; --doc-lead: 17px; --doc-h1: 22px; --doc-h2: 18px; --doc-h3: 16px; --doc-h4: 15px;
     --doc-quote: 17px; --doc-code: 13px; --doc-ui: 14px; --doc-gap: 14px; --doc-h-bottom: 8px;
     --doc-h1-top: 32px; --doc-h2-top: 26px; --doc-h3-top: 20px; --doc-hr: 28px; --doc-fig: 24px;
-    --doc-callout-pad: 12px; --doc-quote-pad: 14px;
+    --doc-callout-pad: 12px; --doc-quote-pad: 14px; --doc-frag-offset: 11px;
     max-width: none;
     padding: 32px 20px 96px;
     font-size: 16px;
@@ -670,6 +671,8 @@
 .lib-byline__text { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; font-size: var(--text-md); }
 .lib-byline__name { font-weight: var(--weight-medium); color: var(--color-text); }
 .lib-byline__role { color: var(--color-text-muted); }
+/* Rule between the header and the body: 32px above (header margin + this), 16px below */
+.lib-doc hr.lib-doc-divider { margin: calc(var(--space-8) - var(--doc-gap)) 0 var(--space-4); }
 
 /* --- Status banner: stale or abandoned, with reason --------------------- */
 .lib-status-banner {
@@ -964,6 +967,91 @@
 .lib-chart.is-match .lib-chart__col:not(.is-match) .lib-chart__bar { background: var(--color-accent-subtle); }
 .lib-chart.is-match .lib-chart__col:not(.is-match) .lib-chart__value { color: var(--color-text-muted); }
 .lib-chart.is-match .lib-chart__col.is-match .lib-chart__value { font-weight: var(--weight-semibold); }
+
+/* --- Fragment: an authored part with weight and topics -------------------
+   From <!-- frag: id | weight: critical|helpful|background | topics: a, b --> … <!-- /frag -->.
+   Only parts that carry the comment get this wrapper. A rail sits in the left margin and a small
+   meta line sits above the part. Both disappear in reading mode. */
+.lib-frag { position: relative; scroll-margin-top: var(--space-16); }
+.lib-frag::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: calc(-1 * var(--doc-frag-offset, 24px));
+  width: 2px;
+  border-radius: 2px;
+  background: var(--frag-rail, var(--color-border-strong));
+  transition: opacity var(--dur-base) ease;
+}
+.lib-frag--critical { --frag-rail: var(--color-accent); --frag-weight-fg: var(--color-accent); }
+.lib-frag--helpful { --frag-rail: var(--color-accent-subtle); }
+.lib-frag--background { --frag-rail: var(--color-border-strong); }
+.lib-frag__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin: 0 0 6px;
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+.lib-frag__weight {
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--frag-weight-fg, var(--color-text-muted));
+}
+.lib-frag__topic {
+  padding: 0 7px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  line-height: 18px;
+}
+.lib-frag__id {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+.lib-frag__id:hover { color: var(--color-accent); }
+.lib-frag > :last-child { margin-bottom: 0; }
+.lib-frag + * { margin-top: var(--doc-gap); }
+/* Reading mode: details hide until asked for. .show-frag-details on .lib-app (toolbar button)
+   reveals every part; .is-revealed on one .lib-frag (its margin button) reveals just that part. */
+.lib-app.is-reading:not(.show-frag-details) .lib-frag:not(.is-revealed) .lib-frag__meta { display: none; }
+.lib-app.is-reading:not(.show-frag-details) .lib-frag:not(.is-revealed)::before { opacity: 0; }
+.lib-frag__toggle {
+  display: none;
+  position: absolute;
+  top: 8px;
+  left: calc(-1 * var(--doc-frag-offset, 24px) - 32px);
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  opacity: 0.35;
+  cursor: pointer;
+  transition: opacity var(--dur-fast) ease, background var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+.lib-app.is-reading .lib-frag__toggle { display: flex; }
+.lib-frag:hover .lib-frag__toggle,
+.lib-frag__toggle:focus-visible,
+.lib-frag__toggle[aria-expanded="true"] { opacity: 1; }
+.lib-frag__toggle[aria-expanded="true"] { color: var(--color-accent); }
+.lib-frag__toggle:hover { background: var(--color-bg-sunken); color: var(--color-text); }
+.lib-frag__toggle svg { width: 15px; height: 15px; }
+@container (max-width: 559px) {
+  .lib-frag__toggle { left: auto; right: -20px; top: 0; width: 20px; height: 24px; }
+}
 
 /* --- Search match inside the open document ------------------------------ */
 .lib-doc-block {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { HashRouter, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom';
-import { DocumentPage } from './pages/DocumentPage';
+import { DocumentPage, FragmentDetailsIcon } from './pages/DocumentPage';
 import { SearchPage } from './pages/SearchPage';
 
 type Theme = 'light' | 'dark';
@@ -9,6 +9,7 @@ function Shell() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [reading, setReading] = useState(false);
+  const [showAllFrags, setShowAllFrags] = useState(false);
   const [theme, setTheme] = useState<Theme>(() =>
     window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   );
@@ -18,7 +19,10 @@ function Shell() {
   }, [theme]);
 
   const isOpen = id !== undefined;
-  const className = ['lib-app', isOpen && 'is-open', isOpen && reading && 'is-reading'].filter(Boolean).join(' ');
+  const className = ['lib-app', isOpen && 'is-open', isOpen && reading && 'is-reading', showAllFrags && 'show-frag-details']
+    .filter(Boolean)
+    .join(' ');
+  const allFragsLabel = showAllFrags ? 'Hide details for all parts' : 'Show details for all parts';
 
   function closeDocument() {
     setReading(false);
@@ -33,6 +37,18 @@ function Shell() {
           {isOpen && (
             <>
               <div className="lib-doc-toolbar">
+                {reading && (
+                  <button
+                    type="button"
+                    className="lib-icon-btn"
+                    aria-label={allFragsLabel}
+                    aria-pressed={showAllFrags}
+                    title={allFragsLabel}
+                    onClick={() => setShowAllFrags(!showAllFrags)}
+                  >
+                    <FragmentDetailsIcon />
+                  </button>
+                )}
                 <button
                   type="button"
                   className="lib-icon-btn"
@@ -56,14 +72,16 @@ function Shell() {
                     </svg>
                   )}
                 </button>
-                <button type="button" className="lib-icon-btn" aria-label="Close document" onClick={closeDocument}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                  </svg>
-                </button>
+                {!reading && (
+                  <button type="button" className="lib-icon-btn" aria-label="Close document" onClick={closeDocument}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                    </svg>
+                  </button>
+                )}
               </div>
-              <DocumentPage />
+              <DocumentPage showAllFrags={showAllFrags} setShowAllFrags={setShowAllFrags} />
             </>
           )}
         </div>
