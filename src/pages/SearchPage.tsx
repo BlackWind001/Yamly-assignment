@@ -1,8 +1,8 @@
 import { Fragment, useEffect, useRef, useState, type SubmitEvent } from 'react';
-import Markdown from 'react-markdown';
 import { useNavigate, useParams } from 'react-router-dom';
 import { parseDocument, sectionPath, type DocumentFrontmatter } from '../document/parseDocument';
 import { getMockAnswer } from '../search/getMockAnswer';
+import { plainText, sentenceSnippet } from '../search/snippet';
 import { TelemetryTiles } from '../telemetry/Telemetry';
 
 type ShownFragment = {
@@ -12,6 +12,9 @@ type ShownFragment = {
   label: string;
   frontmatter: DocumentFrontmatter;
   sections: string[];
+  // The matched sentence, shown as a short excerpt ("sentence") or inside the whole paragraph ("paragraph").
+  match: string;
+  matchText: string;
 };
 
 function documentId(doc: string): string {
@@ -71,6 +74,8 @@ export function SearchPage() {
               body: parsed?.fragments.find((item) => item.id === fragment.frag)?.body ?? null,
               frontmatter: parsed?.frontmatter ?? {},
               sections: parsed ? sectionPath(parsed.blocks, fragment.frag) : [],
+              match: fragment.match,
+              matchText: fragment.match_text,
             };
           }),
         );
@@ -164,6 +169,9 @@ export function SearchPage() {
             )}
             {fragments?.map((fragment) => {
               const { title, status, last_updated } = fragment.frontmatter;
+              const text = fragment.body ? plainText(fragment.body) : fragment.label;
+              const isParagraph = fragment.match === 'paragraph';
+              const parts = sentenceSnippet(text, fragment.matchText, isParagraph ? Infinity : undefined);
               return (
                 <li key={fragment.key}>
                   <button
@@ -172,14 +180,15 @@ export function SearchPage() {
                     aria-pressed={openId !== undefined && selected === fragment.key}
                     onClick={() => open(fragment)}
                   >
-                    <span className="lib-snippet">
-                      {fragment.body ? (
-                        // Buttons only allow inline content: keep emphasis, unwrap paragraphs, lists and links.
-                        <Markdown allowedElements={['strong', 'em', 'code']} unwrapDisallowed>
-                          {fragment.body}
-                        </Markdown>
+                    <span className={isParagraph ? 'lib-snippet lib-snippet--paragraph' : 'lib-snippet'}>
+                      {parts ? (
+                        <>
+                          {parts.before}
+                          <mark className="lib-match">{parts.match}</mark>
+                          {parts.after}
+                        </>
                       ) : (
-                        fragment.label
+                        text
                       )}
                     </span>
                     <span className="lib-result__meta">
